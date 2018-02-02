@@ -16,7 +16,6 @@ namespace Week1
         private string state;
         private int postalcode;
 
-
         public int EmployeeNo { get { return employeeno; } set { employeeno = value; } }
         public string FirstName { get { return firstname; } set { firstname = value; } }
         public string LastName { get { return lastname; } set { lastname = value; } }
@@ -24,6 +23,11 @@ namespace Week1
         public string City { get { return city; } set { city = value; } }
         public string State { get { return state; } set { state = value; } }
         public int PstalCode { get { return postalcode; } set { postalcode = value; } }
+
+        public override string ToString()
+        {
+            return this.employeeno.ToString() + this.firstname + this.lastname + this.address + this.city + this.state + this.postalcode.ToString();
+        }
     }
 
     class Product   {
@@ -31,7 +35,6 @@ namespace Week1
         private string productname;
         private int unitprice;
         private bool isactive;
-
 
         public int ProductNo { get { return productno; } set { productno = value; } }
         public string ProductName { get { return productname; } set {productname = value; } }
@@ -71,27 +74,13 @@ namespace Week1
         private string shipcountry;
         private DateTime createddate;
         private DateTime modifieddate;
-
-        public Order(int no, Customer c, Employee e)
-        {
-            this.orderno = no;
-            this.customerdetail = c;
-            this.employeedetail = e;
-            this.orderdate = DateTime.Today.ToString("dd-MM-yyyy");
-            this.shipname = c.CustomerName;
-            this.shipaddress = c.Address;
-            this.shipcity = c.City;
-            this.shipstate = c.State;
-            this.shippostalcode = c.PstalCode;
-            this.shipcountry = c.Country;
-            this.createddate = DateTime.Now;
-            this.modifieddate = DateTime.Now;            
-        }
        
+
         public int OrderNo { get { return orderno; } set { orderno = value;} }
         public Customer CustomerDetail { get { return customerdetail; } set { customerdetail = value; } }
         public Employee EmployeeDetail { get { return employeedetail; } set { employeedetail = value; } }
         public string OrderDate { get { return orderdate; } set { orderdate = value; } }
+        public string ShipAddress { get { return shipaddress; } set { shipaddress = value; } }
         public string ShipName { get { return shipname; } set { shipname = value; } }
         public string ShipCity { get { return shipcity; } set { shipcity = value; } }
         public string ShipState { get { return shipstate; } set { shipstate = value; } }
@@ -103,7 +92,7 @@ namespace Week1
 
     class OrderDetail
     {
-        private Product[] productdetail;
+        private Product productdetail;
         private int unitprice;
         private int quantity;
         private int amount;
@@ -112,7 +101,7 @@ namespace Week1
         private DateTime createddate;
         private DateTime modifieddate;
 
-        public Product[] ProProductDetail { get { return productdetail; } set { productdetail = value; } }
+        public Product ProProductDetail { get { return productdetail; } set { productdetail = value; } }
         public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public int Quantity { get { return quantity; } set { quantity = value; } }
         public int Amount { get { return amount; } set { amount = value; } }
@@ -129,6 +118,37 @@ namespace Week1
         public static ArrayList AllProductDetails = new ArrayList();
         public static ArrayList AllOrder = new ArrayList();
         public static ArrayList AllOrderDetails = new ArrayList();
+
+        static void AddOrder()
+        {
+            Console.Write("Order Number : ");
+            int O_no = Convert.ToInt32(Console.ReadLine());
+
+            AddCustomerDetails();
+            AddEmployeeDetails();
+
+            int len = AllEmployeeDetails.Count;
+
+            //Order order = new Order(O_no, (Customer)AllCustomerDetails[len - 1], (Employee)AllEmployeeDetails[len - 1]);
+            Customer temp_c = (Customer)AllCustomerDetails[len - 1];
+            Employee temp_e = (Employee)AllEmployeeDetails[len - 1];
+
+            Order o = new Order();
+            o.OrderNo = O_no;
+            o.CustomerDetail = temp_c;
+            o.EmployeeDetail = temp_e;
+            o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
+            o.ShipName = temp_c.CustomerName;
+            o.ShipAddress = temp_c.Address;
+            o.ShipCity = temp_c.City;
+            o.ShipState = temp_c.State;
+            o.ShipPostalCode = temp_c.PstalCode;
+            o.ShipCountry = temp_c.Country;
+            o.CreatedDate = DateTime.Today;
+            o.ModifiedDate = DateTime.Today;
+
+            AllOrder.Add(o);
+        }
 
         static void AddCustomerDetails()
         {
@@ -169,10 +189,10 @@ namespace Week1
             Console.WriteLine("\n\n\t\t\t\tEmployee Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("Enter First Name : ");
+            Console.Write("\nEnter First Name : ");
             string E_fname = Console.ReadLine();
 
-            Console.Write("Enter Last Name : ");
+            Console.Write("\nEnter Last Name : ");
             string E_lname = Console.ReadLine();
 
             Console.Write("\nEnter Address : ");
@@ -203,10 +223,10 @@ namespace Week1
             Console.WriteLine("\n\n\t\t\t\tProduct Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("Enter Product No : ");
+            Console.Write("\nEnter Product No : ");
             int P_no = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("Enter Product Name : ");
+            Console.Write("\nEnter Product Name : ");
             string P_name = Console.ReadLine();
 
             Console.Write("\nEnter Unit Price : ");
@@ -231,49 +251,40 @@ namespace Week1
 
         static void AddOrderDetails()
         {
-            do
-            {
-                AddProduct();
-                int len = AllProductDetails.Count;
+            AddProduct();
+            int len = AllProductDetails.Count;
 
-                Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
-                Console.WriteLine("==================================================");
+            Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
+            Console.WriteLine("==================================================");
 
-                Product temp_p = (Product)AllProductDetails[len-1];
-                int OD_unit = temp_p.UnitPrice;
+            Product temp_p = (Product)AllProductDetails[len-1];
+            int OD_unit = temp_p.UnitPrice;
 
-                Console.Write("Enter Quantity : ");
-                int OD_quantity = Convert.ToInt32(Console.ReadLine());
+            Console.Write("\nEnter Quantity : ");
+            int OD_quantity = Convert.ToInt32(Console.ReadLine());
+            
+            int OD_amount = OD_unit * OD_quantity;
+            Console.Write("\nEnter Discount : ");
+            int OD_discount = Convert.ToInt32(Console.ReadLine());
+                
+            int OD_total = OD_amount - OD_discount;
 
-                int OD_amount = OD_unit * OD_quantity;
+            DateTime OD_create = DateTime.Now;
+            DateTime OD_modifi = DateTime.Now;
 
-                Console.Write("Enter Discount : ");
-                int OD_discount = Convert.ToInt32(Console.ReadLine());
+            OrderDetail od = new OrderDetail();
+            od.ProProductDetail = temp_p;
+            od.Quantity = OD_quantity;
+            od.Amount = OD_amount;
+            od.DiscountAmount = OD_discount;
+            od.GrandTotal = OD_total;
+            od.CreatedDate = OD_create;
+            od.ModifiedDate = OD_modifi;
 
-                int OD_total = OD_amount - OD_discount;
-
-                DateTime OD_create = DateTime.Now;
-                DateTime OD_modifi = DateTime.Now;
-
-                OrderDetail od = new OrderDetail();
-                od.ProductDetail = temp_p;
-            }while//Here
-
+            AllOrderDetails.Add(od);
         }
 
-        static void AddOrder()
-        {
-            Console.Write("Order Number : ");
-            int O_no= Convert.ToInt32(Console.ReadLine());
-
-            AddCustomerDetails();
-            AddEmployeeDetails();
-
-            int len = AllEmployeeDetails.Count;
-
-            Order order = new Order(O_no, (Customer)AllCustomerDetails[len - 1], (Employee)AllEmployeeDetails[len - 1]);
-            AllOrder.Add(order);
-        }
+        
 
         static void UpadteOrder()
         {
@@ -293,14 +304,13 @@ namespace Week1
             Console.WriteLine("2. Update Order");
             Console.WriteLine("3. Delete Order");
 
-            int input = Convert.ToInt32(Console.ReadKey());
+            int input = Convert.ToInt32(Console.ReadLine());
 
             switch (input)
             {
                 case 1:
                     AddOrder();
                     AddOrderDetails();
-
                     break;
                 case 2:
                     UpadteOrder();
@@ -308,8 +318,7 @@ namespace Week1
                 case 3:
                     DeleteOrder();
                     break;
-            }
-            
+            }            
         }
     }
 }
