@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.Collections;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,13 +55,14 @@ namespace Week1
         public string City { get { return city; } set { city = value; } }
         public string State { get { return state; } set { state = value; } }
         public int PstalCode { get { return postalcode; } set { postalcode = value; } }
+        public string Country { get { return country; } set { country = value; } }
     }
     
     class Order {
         private int orderno;
         private Customer customerdetail;
         private Employee employeedetail;
-        private DateTime orderdate;
+        private string orderdate;
         private string shipname;
         private string shipaddress;
         private string shipcity;
@@ -70,11 +72,26 @@ namespace Week1
         private DateTime createddate;
         private DateTime modifieddate;
 
-
+        public Order(int no, Customer c, Employee e)
+        {
+            this.orderno = no;
+            this.customerdetail = c;
+            this.employeedetail = e;
+            this.orderdate = DateTime.Today.ToString("dd-MM-yyyy");
+            this.shipname = c.CustomerName;
+            this.shipaddress = c.Address;
+            this.shipcity = c.City;
+            this.shipstate = c.State;
+            this.shippostalcode = c.PstalCode;
+            this.shipcountry = c.Country;
+            this.createddate = DateTime.Now;
+            this.modifieddate = DateTime.Now;            
+        }
+       
         public int OrderNo { get { return orderno; } set { orderno = value;} }
         public Customer CustomerDetail { get { return customerdetail; } set { customerdetail = value; } }
         public Employee EmployeeDetail { get { return employeedetail; } set { employeedetail = value; } }
-        public DateTime OrderDate { get { return orderdate; } set { orderdate = value; } }
+        public string OrderDate { get { return orderdate; } set { orderdate = value; } }
         public string ShipName { get { return shipname; } set { shipname = value; } }
         public string ShipCity { get { return shipcity; } set { shipcity = value; } }
         public string ShipState { get { return shipstate; } set { shipstate = value; } }
@@ -107,9 +124,171 @@ namespace Week1
 
     class Program
     {
+        public static ArrayList AllCustomerDetails = new ArrayList();
+        public static ArrayList AllEmployeeDetails = new ArrayList();
+        public static ArrayList AllProductDetails = new ArrayList();
+        public static ArrayList AllOrder = new ArrayList();
+        public static ArrayList AllOrderDetails = new ArrayList();
+
+        static void AddCustomerDetails()
+        {
+            Console.WriteLine("\n\n\t\t\t\tCustomer Details : ");
+            Console.WriteLine("==================================================");
+
+            Console.Write("Enter Name : ");
+            string C_name = Console.ReadLine();
+
+            Console.Write("\nEnter Address : ");
+            string C_addr = Console.ReadLine();
+
+            Console.Write("\nEnter City : ");
+            string C_city = Console.ReadLine();
+
+            Console.Write("\nEnter State : ");
+            string C_state = Console.ReadLine();
+
+            Console.Write("\nEnter Postal Code : ");
+            int C_postal = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("\nEnter Country : ");
+            string C_country = Console.ReadLine();
+
+            Customer c = new Customer();
+            c.CustomerName = C_name;
+            c.Address = C_addr;
+            c.City = C_city;
+            c.State = C_state;
+            c.PstalCode = C_postal;
+            c.Country = C_country;
+
+            AllCustomerDetails.Add(c);
+        }
+
+        static void AddEmployeeDetails()
+        {
+            Console.WriteLine("\n\n\t\t\t\tEmployee Details : ");
+            Console.WriteLine("==================================================");
+
+            Console.Write("Enter First Name : ");
+            string E_fname = Console.ReadLine();
+
+            Console.Write("Enter Last Name : ");
+            string E_lname = Console.ReadLine();
+
+            Console.Write("\nEnter Address : ");
+            string E_addr = Console.ReadLine();
+
+            Console.Write("\nEnter City : ");
+            string E_city = Console.ReadLine();
+
+            Console.Write("\nEnter State : ");
+            string E_state = Console.ReadLine();
+
+            Console.Write("\nEnter Postal Code : ");
+            int E_postal = Convert.ToInt32(Console.ReadLine());
+
+            Employee e = new Employee();
+            e.FirstName = E_fname;
+            e.LastName = E_lname;
+            e.Address = E_addr;
+            e.City = E_city;
+            e.State = E_state;
+            e.PstalCode = E_postal;
+
+            AllEmployeeDetails.Add(e);
+        }
+
+        static void AddProduct()
+        {
+            Console.WriteLine("\n\n\t\t\t\tProduct Details : ");
+            Console.WriteLine("==================================================");
+
+            Console.Write("Enter Product No : ");
+            int P_no = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Product Name : ");
+            string P_name = Console.ReadLine();
+
+            Console.Write("\nEnter Unit Price : ");
+            int P_unit = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("\nIs Product Active( Yes/No ) : ");
+            string ch = Console.ReadLine().ToLower();
+
+            bool P_active = false;
+
+            if(ch.Equals("yes"))
+                P_active = true;
+
+            Product p = new Product();
+            p.ProductNo = P_no;
+            p.ProductName = P_name;
+            p.UnitPrice = P_unit;
+            p.IsActive = P_active;
+
+            AllProductDetails.Add(p);
+        }
+
+        static void AddOrderDetails()
+        {
+            do
+            {
+                AddProduct();
+                int len = AllProductDetails.Count;
+
+                Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
+                Console.WriteLine("==================================================");
+
+                Product temp_p = (Product)AllProductDetails[len-1];
+                int OD_unit = temp_p.UnitPrice;
+
+                Console.Write("Enter Quantity : ");
+                int OD_quantity = Convert.ToInt32(Console.ReadLine());
+
+                int OD_amount = OD_unit * OD_quantity;
+
+                Console.Write("Enter Discount : ");
+                int OD_discount = Convert.ToInt32(Console.ReadLine());
+
+                int OD_total = OD_amount - OD_discount;
+
+                DateTime OD_create = DateTime.Now;
+                DateTime OD_modifi = DateTime.Now;
+
+                OrderDetail od = new OrderDetail();
+                od.ProductDetail = temp_p;
+            }while//Here
+
+        }
+
+        static void AddOrder()
+        {
+            Console.Write("Order Number : ");
+            int O_no= Convert.ToInt32(Console.ReadLine());
+
+            AddCustomerDetails();
+            AddEmployeeDetails();
+
+            int len = AllEmployeeDetails.Count;
+
+            Order order = new Order(O_no, (Customer)AllCustomerDetails[len - 1], (Employee)AllEmployeeDetails[len - 1]);
+            AllOrder.Add(order);
+        }
+
+        static void UpadteOrder()
+        {
+
+        }
+
+        static void DeleteOrder()
+        {
+
+        }
 
         static void Main(string[] args)
         {
+            
+            
             Console.WriteLine("1. Add Order");
             Console.WriteLine("2. Update Order");
             Console.WriteLine("3. Delete Order");
@@ -119,11 +298,15 @@ namespace Week1
             switch (input)
             {
                 case 1:
+                    AddOrder();
+                    AddOrderDetails();
 
                     break;
                 case 2:
+                    UpadteOrder();
                     break;
                 case 3:
+                    DeleteOrder();
                     break;
             }
             
