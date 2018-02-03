@@ -104,6 +104,19 @@ namespace Week1
         public int GrandTotal { get { return grandtotal; } set { grandtotal = value; } }
         public DateTime CreatedDate { get { return createddate; } set { createddate = value; } }
         public DateTime ModifiedDate { get { return modifieddate; } set { modifieddate = value; } }
+
+        public void Show()
+        {
+            Console.WriteLine("Name             : {0}", this.productdetail.ProductName);
+            Console.WriteLine("Unite Price      : {0}", this.unitprice);
+            Console.WriteLine("Quantity         : {0}", this.quantity);
+            Console.WriteLine("Amount           : {0}", this.amount);
+            Console.WriteLine("Discount         : {0}", this.discountamount);
+            Console.WriteLine("Total            : {0}", this.GrandTotal);
+            Console.WriteLine("Create Date      : {0}", this.CreatedDate);
+            Console.WriteLine("Modified Date    : {0}", this.modifieddate);
+            Console.WriteLine("Product Avilable : {0}", this.productdetail.IsActive);
+        }
     }
 
     class Program
@@ -305,9 +318,12 @@ namespace Week1
 
         static void AddOrderDetails()
         {
+            OrderDetail od = new OrderDetail();
+            od.ProProductDetail = AddProduct();
+
             Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
             Console.WriteLine("==================================================");
-
+          
             Console.Write("Enter Quantity : ");
             int OD_quantity = Convert.ToInt32(Console.ReadLine());
 
@@ -317,8 +333,8 @@ namespace Week1
             DateTime OD_create = DateTime.Now;
             DateTime OD_modifi = DateTime.Now;
 
-            OrderDetail od = new OrderDetail();
-            od.ProProductDetail = AddProduct();
+            
+            od.UnitPrice = od.ProProductDetail.UnitPrice;
             od.Quantity = OD_quantity;
             od.Amount = od.ProProductDetail.UnitPrice * OD_quantity;
             od.DiscountAmount = OD_discount;
@@ -327,6 +343,7 @@ namespace Week1
             od.ModifiedDate = OD_modifi;
 
             AllOrderDetails.Add(od);
+            od.Show();
         }
 
         
@@ -358,7 +375,7 @@ namespace Week1
                     case 1:
                         AddOrder();
                         AddOrderDetails();
-                        Employee show_e = (Employee)AllEmployeeDetails[0];
+                        Console.ReadKey();
                         break;
                     case 2:
                         UpadteOrder();
