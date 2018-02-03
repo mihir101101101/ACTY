@@ -23,11 +23,6 @@ namespace Week1
         public string City { get { return city; } set { city = value; } }
         public string State { get { return state; } set { state = value; } }
         public int PstalCode { get { return postalcode; } set { postalcode = value; } }
-
-        public override string ToString()
-        {
-            return this.employeeno.ToString() + this.firstname + this.lastname + this.address + this.city + this.state + this.postalcode.ToString();
-        }
     }
 
     class Product   {
@@ -155,25 +150,29 @@ namespace Week1
             Console.WriteLine("\n\n\t\t\t\tCustomer Details : ");
             Console.WriteLine("==================================================");
 
+            Console.Write("Enter No : ");
+            int C_no = Convert.ToInt32(Console.ReadLine());
+
             Console.Write("Enter Name : ");
             string C_name = Console.ReadLine();
 
-            Console.Write("\nEnter Address : ");
+            Console.Write("Enter Address : ");
             string C_addr = Console.ReadLine();
 
-            Console.Write("\nEnter City : ");
+            Console.Write("Enter City : ");
             string C_city = Console.ReadLine();
 
-            Console.Write("\nEnter State : ");
+            Console.Write("Enter State : ");
             string C_state = Console.ReadLine();
 
-            Console.Write("\nEnter Postal Code : ");
+            Console.Write("Enter Postal Code : ");
             int C_postal = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("\nEnter Country : ");
+            Console.Write("Enter Country : ");
             string C_country = Console.ReadLine();
 
             Customer c = new Customer();
+            c.CustomerNo = C_no;
             c.CustomerName = C_name;
             c.Address = C_addr;
             c.City = C_city;
@@ -189,25 +188,29 @@ namespace Week1
             Console.WriteLine("\n\n\t\t\t\tEmployee Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("\nEnter First Name : ");
+            Console.Write("Enter No : ");
+            int E_no = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter First Name : ");
             string E_fname = Console.ReadLine();
 
-            Console.Write("\nEnter Last Name : ");
+            Console.Write("Enter Last Name : ");
             string E_lname = Console.ReadLine();
 
-            Console.Write("\nEnter Address : ");
+            Console.Write("Enter Address : ");
             string E_addr = Console.ReadLine();
 
-            Console.Write("\nEnter City : ");
+            Console.Write("Enter City : ");
             string E_city = Console.ReadLine();
 
-            Console.Write("\nEnter State : ");
+            Console.Write("Enter State : ");
             string E_state = Console.ReadLine();
 
-            Console.Write("\nEnter Postal Code : ");
+            Console.Write("Enter Postal Code : ");
             int E_postal = Convert.ToInt32(Console.ReadLine());
 
             Employee e = new Employee();
+            e.EmployeeNo = E_no;
             e.FirstName = E_fname;
             e.LastName = E_lname;
             e.Address = E_addr;
@@ -223,16 +226,16 @@ namespace Week1
             Console.WriteLine("\n\n\t\t\t\tProduct Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("\nEnter Product No : ");
+            Console.Write("Enter Product No : ");
             int P_no = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("\nEnter Product Name : ");
+            Console.Write("Enter Product Name : ");
             string P_name = Console.ReadLine();
 
-            Console.Write("\nEnter Unit Price : ");
+            Console.Write("Enter Unit Price : ");
             int P_unit = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("\nIs Product Active( Yes/No ) : ");
+            Console.Write("Is Product Active( Yes/No ) : ");
             string ch = Console.ReadLine().ToLower();
 
             bool P_active = false;
@@ -260,11 +263,11 @@ namespace Week1
             Product temp_p = (Product)AllProductDetails[len-1];
             int OD_unit = temp_p.UnitPrice;
 
-            Console.Write("\nEnter Quantity : ");
+            Console.Write("Enter Quantity : ");
             int OD_quantity = Convert.ToInt32(Console.ReadLine());
             
             int OD_amount = OD_unit * OD_quantity;
-            Console.Write("\nEnter Discount : ");
+            Console.Write("Enter Discount : ");
             int OD_discount = Convert.ToInt32(Console.ReadLine());
                 
             int OD_total = OD_amount - OD_discount;
@@ -298,27 +301,31 @@ namespace Week1
 
         static void Main(string[] args)
         {
-            
-            
-            Console.WriteLine("1. Add Order");
-            Console.WriteLine("2. Update Order");
-            Console.WriteLine("3. Delete Order");
-
-            int input = Convert.ToInt32(Console.ReadLine());
-
-            switch (input)
+            int input;
+            do
             {
-                case 1:
-                    AddOrder();
-                    AddOrderDetails();
-                    break;
-                case 2:
-                    UpadteOrder();
-                    break;
-                case 3:
-                    DeleteOrder();
-                    break;
-            }            
+                Console.WriteLine("1. Add Order");
+                Console.WriteLine("2. Update Order");
+                Console.WriteLine("3. Delete Order");
+                Console.WriteLine("4. Exit");
+
+                input = Convert.ToInt32(Console.ReadLine());
+
+                switch (input)
+                {
+                    case 1:
+                        AddOrder();
+                        AddOrderDetails();
+                        Employee show_e = (Employee)AllEmployeeDetails[0];
+                        break;
+                    case 2:
+                        UpadteOrder();
+                        break;
+                    case 3:
+                        DeleteOrder();
+                        break;
+                }
+            } while (input != 4);
         }
     }
 }
