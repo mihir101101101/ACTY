@@ -87,6 +87,7 @@ namespace Week1
 
     class OrderDetail
     {
+        private int ordernoref;
         private Product productdetail;
         private int unitprice;
         private int quantity;
@@ -96,6 +97,7 @@ namespace Week1
         private DateTime createddate;
         private DateTime modifieddate;
 
+        public int OrderNoRef { get { return ordernoref; } set { ordernoref = value; } }
         public Product ProProductDetail { get { return productdetail; } set { productdetail = value; } }
         public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public int Quantity { get { return quantity; } set { quantity = value; } }
@@ -116,6 +118,26 @@ namespace Week1
             Console.WriteLine("Create Date      : {0}", this.CreatedDate);
             Console.WriteLine("Modified Date    : {0}", this.modifieddate);
             Console.WriteLine("Product Avilable : {0}", this.productdetail.IsActive);
+        }
+    }
+
+    class Validation
+    {
+        public static bool IsOrderNo(int no)
+        {
+            foreach (Order v_order in Program.AllOrder)
+            {
+                if (no == v_order.OrderNo)
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsEmpty(string name)
+        {
+            if (name == "")
+                return true;
+            return false;
         }
     }
 
@@ -164,8 +186,13 @@ namespace Week1
 
         static void AddOrder()
         {
-            Console.Write("Order Number : ");
-            int O_no = Convert.ToInt32(Console.ReadLine());
+            int O_no;
+
+            do
+            {
+                Console.Write("Order Number : ");
+                O_no = Convert.ToInt32(Console.ReadLine());
+            } while (Validation.IsOrderNo(O_no));
 
             int len = AllEmployeeDetails.Count;
             
@@ -193,8 +220,13 @@ namespace Week1
 
             int C_no = AllCustomerDetails.Count + 1;
 
-            Console.Write("Enter Name : ");
-            string C_name = Console.ReadLine().ToLower();
+            string C_name;
+
+            do
+            {
+                Console.Write("Enter Name : ");
+                C_name = Console.ReadLine().ToLower();
+            } while (Validation.IsEmpty(C_name));
 
             var t = CheckAvilability(C_name, "Customer");
 
@@ -238,11 +270,19 @@ namespace Week1
 
             int E_no = AllEmployeeDetails.Count + 1;
 
-            Console.Write("Enter First Name : ");
-            string E_fname = Console.ReadLine().ToLower();
+            string E_fname, E_lname;
 
-            Console.Write("Enter Last Name : ");
-            string E_lname = Console.ReadLine().ToLower();
+            do
+            {
+                Console.Write("Enter First Name : ");
+                E_fname = Console.ReadLine().ToLower();
+            } while (Validation.IsEmpty(E_fname));
+
+            do
+            {
+                Console.Write("Enter Last Name : ");
+                E_lname = Console.ReadLine().ToLower();
+            } while (Validation.IsEmpty(E_lname));
 
             string E_name = E_fname + " " + E_lname;
 
@@ -285,8 +325,13 @@ namespace Week1
 
             int P_no = AllProductDetails.Count + 1;
 
-            Console.Write("Enter Product Name : ");
-            string P_name = Console.ReadLine().ToLower();
+            string P_name;
+
+            do
+            {
+                Console.Write("Enter Product Name : ");
+                P_name = Console.ReadLine().ToLower();
+            } while (Validation.IsEmpty(P_name));
 
             var t = CheckAvilability(P_name, "Product");
 
@@ -318,32 +363,49 @@ namespace Week1
 
         static void AddOrderDetails()
         {
-            OrderDetail od = new OrderDetail();
-            od.ProProductDetail = AddProduct();
+            int len = AllOrder.Count;
+            Order temp_o = (Order)AllOrder[len - 1];
+            string wannadd;
+            do
+            {
+                OrderDetail od = new OrderDetail();
+                od.OrderNoRef = temp_o.OrderNo;
+                od.ProProductDetail = AddProduct();
 
-            Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
-            Console.WriteLine("==================================================");
-          
-            Console.Write("Enter Quantity : ");
-            int OD_quantity = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
+                Console.WriteLine("==================================================");
 
-            Console.Write("Enter Discount : ");
-            int OD_discount = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Product Unit Price is {0}; Your Price : ", od.ProProductDetail.UnitPrice);
+                int OD_unit = Convert.ToInt32(Console.ReadLine());
 
-            DateTime OD_create = DateTime.Now;
-            DateTime OD_modifi = DateTime.Now;
+                int OD_quantity;
+                do
+                {
+                    Console.Write("Enter Quantity : ");
+                    OD_quantity = Convert.ToInt32(Console.ReadLine());
+                } while (OD_quantity < 1);
 
-            
-            od.UnitPrice = od.ProProductDetail.UnitPrice;
-            od.Quantity = OD_quantity;
-            od.Amount = od.ProProductDetail.UnitPrice * OD_quantity;
-            od.DiscountAmount = OD_discount;
-            od.GrandTotal = od.Amount - OD_discount;
-            od.CreatedDate = OD_create;
-            od.ModifiedDate = OD_modifi;
+                Console.Write("Enter Discount : ");
+                int OD_discount = Convert.ToInt32(Console.ReadLine());
 
-            AllOrderDetails.Add(od);
-            od.Show();
+                DateTime OD_create = DateTime.Now;
+                DateTime OD_modifi = DateTime.Now;
+
+
+                od.UnitPrice = OD_unit;
+                od.Quantity = OD_quantity;
+                od.Amount = od.ProProductDetail.UnitPrice * OD_quantity;
+                od.DiscountAmount = OD_discount;
+                od.GrandTotal = od.Amount - OD_discount;
+                od.CreatedDate = OD_create;
+                od.ModifiedDate = OD_modifi;
+
+                AllOrderDetails.Add(od);
+
+                Console.WriteLine("==================================================");
+                Console.Write("Add Product? (Yes/No) : ");
+                wannadd = Console.ReadLine().ToLower();
+            } while (wannadd != "no");
         }
 
         
@@ -375,6 +437,11 @@ namespace Week1
                     case 1:
                         AddOrder();
                         AddOrderDetails();
+                        Console.WriteLine(AllCustomerDetails.Count);
+                        Console.WriteLine(AllEmployeeDetails.Count);
+                        Console.WriteLine(AllProductDetails.Count);
+                        Console.WriteLine(AllOrder.Count);
+                        Console.WriteLine(AllOrderDetails.Count);
                         Console.ReadKey();
                         break;
                     case 2:
