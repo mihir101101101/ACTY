@@ -114,47 +114,81 @@ namespace Week1
         public static ArrayList AllOrder = new ArrayList();
         public static ArrayList AllOrderDetails = new ArrayList();
 
+        static Tuple<bool, int> CheckAvilability(string name, string InWhich)
+        {
+            if (InWhich == "Employee")
+            {
+                int i = 0;
+                foreach (Employee loop_e in AllEmployeeDetails)
+                {
+                    if ((loop_e.FirstName + " " + loop_e.LastName).Equals(name))
+                        return new Tuple<bool, int>(true,i);
+                    i++;
+                }
+            }
+            else if (InWhich == "Customer")
+            {
+                int i = 0;
+                foreach (Customer loop_c in AllCustomerDetails)
+                {
+                    if (loop_c.CustomerName.Equals(name))
+                        return new Tuple<bool, int>(true, i);
+                    i++;
+                }
+            }
+            else if (InWhich == "Product")
+            {
+                int i = 0;
+                foreach(Product loop_p in AllProductDetails)
+                {
+                    if(loop_p.ProductName.Equals(name))
+                        return new Tuple<bool, int>(true, i);
+                    i++;
+                }
+            }
+            return new Tuple<bool, int>(false, 0);
+        }
+
         static void AddOrder()
         {
             Console.Write("Order Number : ");
             int O_no = Convert.ToInt32(Console.ReadLine());
 
-            AddCustomerDetails();
-            AddEmployeeDetails();
-
             int len = AllEmployeeDetails.Count;
-
-            //Order order = new Order(O_no, (Customer)AllCustomerDetails[len - 1], (Employee)AllEmployeeDetails[len - 1]);
-            Customer temp_c = (Customer)AllCustomerDetails[len - 1];
-            Employee temp_e = (Employee)AllEmployeeDetails[len - 1];
-
+            
             Order o = new Order();
             o.OrderNo = O_no;
-            o.CustomerDetail = temp_c;
-            o.EmployeeDetail = temp_e;
+            o.CustomerDetail = AddCustomerDetails(); ;
+            o.EmployeeDetail = AddEmployeeDetails(); ;
             o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
-            o.ShipName = temp_c.CustomerName;
-            o.ShipAddress = temp_c.Address;
-            o.ShipCity = temp_c.City;
-            o.ShipState = temp_c.State;
-            o.ShipPostalCode = temp_c.PstalCode;
-            o.ShipCountry = temp_c.Country;
+            o.ShipName = o.CustomerDetail.CustomerName;
+            o.ShipAddress = o.CustomerDetail.Address;
+            o.ShipCity = o.CustomerDetail.City;
+            o.ShipState = o.CustomerDetail.State;
+            o.ShipPostalCode = o.CustomerDetail.PstalCode;
+            o.ShipCountry = o.CustomerDetail.Country;
             o.CreatedDate = DateTime.Today;
             o.ModifiedDate = DateTime.Today;
 
             AllOrder.Add(o);
         }
 
-        static void AddCustomerDetails()
+        static Customer AddCustomerDetails()
         {
             Console.WriteLine("\n\n\t\t\t\tCustomer Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("Enter No : ");
-            int C_no = Convert.ToInt32(Console.ReadLine());
+            int C_no = AllCustomerDetails.Count + 1;
 
             Console.Write("Enter Name : ");
-            string C_name = Console.ReadLine();
+            string C_name = Console.ReadLine().ToLower();
+
+            var t = CheckAvilability(C_name, "Customer");
+
+            if (t.Item1)
+            {
+                return (Customer)AllCustomerDetails[t.Item2];
+            }
 
             Console.Write("Enter Address : ");
             string C_addr = Console.ReadLine();
@@ -181,21 +215,30 @@ namespace Week1
             c.Country = C_country;
 
             AllCustomerDetails.Add(c);
+            return c;
         }
 
-        static void AddEmployeeDetails()
+        static Employee AddEmployeeDetails()
         {
             Console.WriteLine("\n\n\t\t\t\tEmployee Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("Enter No : ");
-            int E_no = Convert.ToInt32(Console.ReadLine());
+            int E_no = AllEmployeeDetails.Count + 1;
 
             Console.Write("Enter First Name : ");
-            string E_fname = Console.ReadLine();
+            string E_fname = Console.ReadLine().ToLower();
 
             Console.Write("Enter Last Name : ");
-            string E_lname = Console.ReadLine();
+            string E_lname = Console.ReadLine().ToLower();
+
+            string E_name = E_fname + " " + E_lname;
+
+            var t = CheckAvilability(E_name, "Employee");
+
+            if (t.Item1)
+            {
+                return (Employee)AllEmployeeDetails[t.Item2];
+            }
 
             Console.Write("Enter Address : ");
             string E_addr = Console.ReadLine();
@@ -219,18 +262,25 @@ namespace Week1
             e.PstalCode = E_postal;
 
             AllEmployeeDetails.Add(e);
+            return e;
         }
 
-        static void AddProduct()
+        static Product AddProduct()
         {
             Console.WriteLine("\n\n\t\t\t\tProduct Details : ");
             Console.WriteLine("==================================================");
 
-            Console.Write("Enter Product No : ");
-            int P_no = Convert.ToInt32(Console.ReadLine());
+            int P_no = AllProductDetails.Count + 1;
 
             Console.Write("Enter Product Name : ");
-            string P_name = Console.ReadLine();
+            string P_name = Console.ReadLine().ToLower();
+
+            var t = CheckAvilability(P_name, "Product");
+
+            if (t.Item1)
+            {
+                return (Product)AllProductDetails[t.Item2];
+            }
 
             Console.Write("Enter Unit Price : ");
             int P_unit = Convert.ToInt32(Console.ReadLine());
@@ -250,37 +300,29 @@ namespace Week1
             p.IsActive = P_active;
 
             AllProductDetails.Add(p);
+            return p;
         }
 
         static void AddOrderDetails()
         {
-            AddProduct();
-            int len = AllProductDetails.Count;
-
             Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
             Console.WriteLine("==================================================");
 
-            Product temp_p = (Product)AllProductDetails[len-1];
-            int OD_unit = temp_p.UnitPrice;
-
             Console.Write("Enter Quantity : ");
             int OD_quantity = Convert.ToInt32(Console.ReadLine());
-            
-            int OD_amount = OD_unit * OD_quantity;
+
             Console.Write("Enter Discount : ");
             int OD_discount = Convert.ToInt32(Console.ReadLine());
-                
-            int OD_total = OD_amount - OD_discount;
 
             DateTime OD_create = DateTime.Now;
             DateTime OD_modifi = DateTime.Now;
 
             OrderDetail od = new OrderDetail();
-            od.ProProductDetail = temp_p;
+            od.ProProductDetail = AddProduct();
             od.Quantity = OD_quantity;
-            od.Amount = OD_amount;
+            od.Amount = od.ProProductDetail.UnitPrice * OD_quantity;
             od.DiscountAmount = OD_discount;
-            od.GrandTotal = OD_total;
+            od.GrandTotal = od.Amount - OD_discount;
             od.CreatedDate = OD_create;
             od.ModifiedDate = OD_modifi;
 
