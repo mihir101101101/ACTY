@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
-using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Week1
 {
-    class Employee  {
+    class Employee
+    {
         private int employeeno;
         private string firstname;
         private string lastname;
@@ -25,19 +25,21 @@ namespace Week1
         public int PstalCode { get { return postalcode; } set { postalcode = value; } }
     }
 
-    class Product   {
+    class Product
+    {
         private int productno;
         private string productname;
         private int unitprice;
         private bool isactive;
 
         public int ProductNo { get { return productno; } set { productno = value; } }
-        public string ProductName { get { return productname; } set {productname = value; } }
+        public string ProductName { get { return productname; } set { productname = value; } }
         public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public bool IsActive { get { return isactive; } set { isactive = value; } }
     }
 
-    class Customer  {
+    class Customer
+    {
         private int customerno;
         private string customername;
         private string address;
@@ -55,8 +57,9 @@ namespace Week1
         public int PstalCode { get { return postalcode; } set { postalcode = value; } }
         public string Country { get { return country; } set { country = value; } }
     }
-    
-    class Order {
+
+    class Order
+    {
         private int orderno;
         private Customer customerdetail;
         private Employee employeedetail;
@@ -69,9 +72,9 @@ namespace Week1
         private string shipcountry;
         private DateTime createddate;
         private DateTime modifieddate;
-       
 
-        public int OrderNo { get { return orderno; } set { orderno = value;} }
+
+        public int OrderNo { get { return orderno; } set { orderno = value; } }
         public Customer CustomerDetail { get { return customerdetail; } set { customerdetail = value; } }
         public Employee EmployeeDetail { get { return employeedetail; } set { employeedetail = value; } }
         public string OrderDate { get { return orderdate; } set { orderdate = value; } }
@@ -98,7 +101,7 @@ namespace Week1
         private DateTime modifieddate;
 
         public int OrderNoRef { get { return ordernoref; } set { ordernoref = value; } }
-        public Product ProProductDetail { get { return productdetail; } set { productdetail = value; } }
+        public Product ProductDetail { get { return productdetail; } set { productdetail = value; } }
         public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public int Quantity { get { return quantity; } set { quantity = value; } }
         public int Amount { get { return amount; } set { amount = value; } }
@@ -139,6 +142,26 @@ namespace Week1
                 return true;
             return false;
         }
+
+        public static bool IsQuantity(int no)
+        {
+            if (no == 0)
+                return true;
+            return false;
+        }
+    }
+
+    class Show
+    {
+        public static void showOrderDetails(int no)
+        {
+            Console.WriteLine("No\t\tName\t\tUTP\t\tQTY");
+            foreach (OrderDetail od in Program.AllOrderDetails)
+            {
+                if (od.OrderNoRef == no)                   
+                    Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}", od.ProductDetail.ProductNo, od.ProductDetail.ProductName, od.UnitPrice, od.Quantity);
+            }
+        }
     }
 
     class Program
@@ -149,6 +172,10 @@ namespace Week1
         public static ArrayList AllOrder = new ArrayList();
         public static ArrayList AllOrderDetails = new ArrayList();
 
+        
+        
+        
+        
         static Tuple<bool, int> CheckAvilability(string name, string InWhich)
         {
             if (InWhich == "Employee")
@@ -157,7 +184,7 @@ namespace Week1
                 foreach (Employee loop_e in AllEmployeeDetails)
                 {
                     if ((loop_e.FirstName + " " + loop_e.LastName).Equals(name))
-                        return new Tuple<bool, int>(true,i);
+                        return new Tuple<bool, int>(true, i);
                     i++;
                 }
             }
@@ -174,15 +201,21 @@ namespace Week1
             else if (InWhich == "Product")
             {
                 int i = 0;
-                foreach(Product loop_p in AllProductDetails)
+                foreach (Product loop_p in AllProductDetails)
                 {
-                    if(loop_p.ProductName.Equals(name))
+                    if (loop_p.ProductName.Equals(name))
                         return new Tuple<bool, int>(true, i);
                     i++;
                 }
             }
             return new Tuple<bool, int>(false, 0);
         }
+
+
+
+
+
+
 
         static void AddOrder()
         {
@@ -195,7 +228,7 @@ namespace Week1
             } while (Validation.IsOrderNo(O_no));
 
             int len = AllEmployeeDetails.Count;
-            
+
             Order o = new Order();
             o.OrderNo = O_no;
             o.CustomerDetail = AddCustomerDetails(); ;
@@ -348,7 +381,7 @@ namespace Week1
 
             bool P_active = false;
 
-            if(ch.Equals("yes"))
+            if (ch.Equals("yes"))
                 P_active = true;
 
             Product p = new Product();
@@ -370,12 +403,12 @@ namespace Week1
             {
                 OrderDetail od = new OrderDetail();
                 od.OrderNoRef = temp_o.OrderNo;
-                od.ProProductDetail = AddProduct();
+                od.ProductDetail = AddProduct();
 
                 Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
                 Console.WriteLine("==================================================");
 
-                Console.Write("Product Unit Price is {0}; Your Price : ", od.ProProductDetail.UnitPrice);
+                Console.Write("Product Unit Price is {0}; Your Price : ", od.ProductDetail.UnitPrice);
                 int OD_unit = Convert.ToInt32(Console.ReadLine());
 
                 int OD_quantity;
@@ -394,7 +427,7 @@ namespace Week1
 
                 od.UnitPrice = OD_unit;
                 od.Quantity = OD_quantity;
-                od.Amount = od.ProProductDetail.UnitPrice * OD_quantity;
+                od.Amount = od.ProductDetail.UnitPrice * OD_quantity;
                 od.DiscountAmount = OD_discount;
                 od.GrandTotal = od.Amount - OD_discount;
                 od.CreatedDate = OD_create;
@@ -408,15 +441,109 @@ namespace Week1
             } while (wannadd != "no");
         }
 
-        
+
+
+
+
+
+
+
+        static void ChangeOrder()
+        {
+            int index = 0;
+            int len = Program.AllOrderDetails.Count;
+            OrderDetail od = new OrderDetail();
+            int update_product_no;
+
+            do
+            {
+                bool flag = false;
+                Console.Write("\nEnter Product Number : ");
+                update_product_no = Convert.ToInt32(Console.ReadLine());
+                int c_quantity;
+
+                for (int i = 0; i < len; i++)
+                {
+                    od = (OrderDetail)Program.AllOrderDetails[i];
+                    if (od.ProductDetail.ProductNo == update_product_no)
+                    {
+                        flag = true;
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (flag)
+                {
+                    do
+                    {
+                        Console.Write("Enter Quantity : ");
+                        c_quantity = Convert.ToInt32(Console.ReadLine());
+                        od.Quantity = c_quantity;
+                    } while (Validation.IsQuantity(c_quantity));
+
+                    od.Amount = od.UnitPrice * od.Quantity;
+                    od.GrandTotal = od.Amount - od.DiscountAmount;
+                    od.ModifiedDate = DateTime.Now;
+
+                    Program.AllOrderDetails[index] = od;
+
+                    Show.showOrderDetails(od.OrderNoRef);
+                    od.Show();
+                }
+                else
+                {
+                    Console.WriteLine("\nNo product avilable : ");
+                }
+            } while (update_product_no != 0);
+        }
 
         static void UpadteOrder()
         {
-
+            Console.Write("\nEnter Order Number : ");
+            int update_no = Convert.ToInt32(Console.ReadLine());
+            Show.showOrderDetails(update_no);
+            ChangeOrder();
         }
+
+
+
+
+
+
+
+
+
 
         static void DeleteOrder()
         {
+            Console.Write("Enter No : ");
+            int del_no = Convert.ToInt32(Console.ReadLine());
+
+            foreach(OrderDetail del_od in Program.AllOrderDetails)
+            {
+                if(del_od.OrderNoRef == del_no)
+                {
+                    del_od.Show();
+                    Console.Write("\nWant to delete? (yes/no) : ");
+                    string ans = Console.ReadLine().ToLower();
+
+                    if (ans.Equals("yes"))
+                    {
+                        Program.AllOrderDetails.Remove(del_od);
+
+                        foreach (Order del_o in Program.AllOrder)
+                        {
+                            if (del_o.OrderNo == del_no)
+                            {
+                                Program.AllOrder.Remove(del_o);
+                                return;
+                            }
+                        }
+                    }
+                }   
+            }
+
 
         }
 
@@ -437,12 +564,6 @@ namespace Week1
                     case 1:
                         AddOrder();
                         AddOrderDetails();
-                        Console.WriteLine(AllCustomerDetails.Count);
-                        Console.WriteLine(AllEmployeeDetails.Count);
-                        Console.WriteLine(AllProductDetails.Count);
-                        Console.WriteLine(AllOrder.Count);
-                        Console.WriteLine(AllOrderDetails.Count);
-                        Console.ReadKey();
                         break;
                     case 2:
                         UpadteOrder();
