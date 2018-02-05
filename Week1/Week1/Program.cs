@@ -162,6 +162,20 @@ namespace Week1
                     Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}", od.ProductDetail.ProductNo, od.ProductDetail.ProductName, od.UnitPrice, od.Quantity);
             }
         }
+
+        public static void showProductAvilability()
+        {
+            Console.WriteLine("No\t\tName\t\tAvilability");
+            foreach (Product p in Program.AllProductDetails)
+            {
+                Console.WriteLine(p.ProductNo + "\t\t" + p.ProductName + "\t\t" + p.IsActive);
+            }
+        }
+
+        public static void showLastCustomer(OrderDetail od)
+        {
+            Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}\t\t{6}\t\t{7}", od.ProductDetail.ProductNo, od.ProductDetail.ProductName, od.UnitPrice, od.Quantity, od.Amount, od.DiscountAmount, od.GrandTotal, od.CreatedDate);
+        }
     }
 
     class Program
@@ -217,34 +231,7 @@ namespace Week1
 
 
 
-        static void AddOrder()
-        {
-            int O_no;
-
-            do
-            {
-                Console.Write("Order Number : ");
-                O_no = Convert.ToInt32(Console.ReadLine());
-            } while (Validation.IsOrderNo(O_no));
-
-            int len = AllEmployeeDetails.Count;
-
-            Order o = new Order();
-            o.OrderNo = O_no;
-            o.CustomerDetail = AddCustomerDetails(); ;
-            o.EmployeeDetail = AddEmployeeDetails(); ;
-            o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
-            o.ShipName = o.CustomerDetail.CustomerName;
-            o.ShipAddress = o.CustomerDetail.Address;
-            o.ShipCity = o.CustomerDetail.City;
-            o.ShipState = o.CustomerDetail.State;
-            o.ShipPostalCode = o.CustomerDetail.PstalCode;
-            o.ShipCountry = o.CustomerDetail.Country;
-            o.CreatedDate = DateTime.Today;
-            o.ModifiedDate = DateTime.Today;
-
-            AllOrder.Add(o);
-        }
+        
 
         static Customer AddCustomerDetails()
         {
@@ -394,6 +381,35 @@ namespace Week1
             return p;
         }
 
+        static void AddOrder()
+        {
+            int O_no;
+
+            do
+            {
+                Console.Write("Order Number : ");
+                O_no = Convert.ToInt32(Console.ReadLine());
+            } while (Validation.IsOrderNo(O_no));
+
+            int len = AllEmployeeDetails.Count;
+
+            Order o = new Order();
+            o.OrderNo = O_no;
+            o.CustomerDetail = AddCustomerDetails(); ;
+            o.EmployeeDetail = AddEmployeeDetails(); ;
+            o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
+            o.ShipName = o.CustomerDetail.CustomerName;
+            o.ShipAddress = o.CustomerDetail.Address;
+            o.ShipCity = o.CustomerDetail.City;
+            o.ShipState = o.CustomerDetail.State;
+            o.ShipPostalCode = o.CustomerDetail.PstalCode;
+            o.ShipCountry = o.CustomerDetail.Country;
+            o.CreatedDate = DateTime.Today;
+            o.ModifiedDate = DateTime.Today;
+
+            AllOrder.Add(o);
+        }
+
         static void AddOrderDetails()
         {
             int len = AllOrder.Count;
@@ -405,35 +421,38 @@ namespace Week1
                 od.OrderNoRef = temp_o.OrderNo;
                 od.ProductDetail = AddProduct();
 
-                Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
-                Console.WriteLine("==================================================");
-
-                Console.Write("Product Unit Price is {0}; Your Price : ", od.ProductDetail.UnitPrice);
-                int OD_unit = Convert.ToInt32(Console.ReadLine());
-
-                int OD_quantity;
-                do
+                if (od.ProductDetail.IsActive)
                 {
-                    Console.Write("Enter Quantity : ");
-                    OD_quantity = Convert.ToInt32(Console.ReadLine());
-                } while (OD_quantity < 1);
+                    Console.WriteLine("\n\n\t\t\t\tOrder Details : ");
+                    Console.WriteLine("==================================================");
 
-                Console.Write("Enter Discount : ");
-                int OD_discount = Convert.ToInt32(Console.ReadLine());
+                    Console.Write("Product Unit Price is {0}; Your Price : ", od.ProductDetail.UnitPrice);
+                    int OD_unit = Convert.ToInt32(Console.ReadLine());
 
-                DateTime OD_create = DateTime.Now;
-                DateTime OD_modifi = DateTime.Now;
+                    int OD_quantity;
+                    do
+                    {
+                        Console.Write("Enter Quantity : ");
+                        OD_quantity = Convert.ToInt32(Console.ReadLine());
+                    } while (OD_quantity < 1);
+
+                    Console.Write("Enter Discount : ");
+                    int OD_discount = Convert.ToInt32(Console.ReadLine());
+
+                    DateTime OD_create = DateTime.Now;
+                    DateTime OD_modifi = DateTime.Now;
 
 
-                od.UnitPrice = OD_unit;
-                od.Quantity = OD_quantity;
-                od.Amount = od.ProductDetail.UnitPrice * OD_quantity;
-                od.DiscountAmount = OD_discount;
-                od.GrandTotal = od.Amount - OD_discount;
-                od.CreatedDate = OD_create;
-                od.ModifiedDate = OD_modifi;
+                    od.UnitPrice = OD_unit;
+                    od.Quantity = OD_quantity;
+                    od.Amount = od.ProductDetail.UnitPrice * OD_quantity;
+                    od.DiscountAmount = OD_discount;
+                    od.GrandTotal = od.Amount - OD_discount;
+                    od.CreatedDate = OD_create;
+                    od.ModifiedDate = OD_modifi;
 
-                AllOrderDetails.Add(od);
+                    AllOrderDetails.Add(od);
+                }
 
                 Console.WriteLine("==================================================");
                 Console.Write("Add Product? (Yes/No) : ");
@@ -447,9 +466,12 @@ namespace Week1
 
 
 
-
-        static void ChangeOrder()
+        static void UpadteOrder()
         {
+            Console.Write("\nEnter Order Number : ");
+            int update_no = Convert.ToInt32(Console.ReadLine());
+            Show.showOrderDetails(update_no);
+
             int index = 0;
             int len = Program.AllOrderDetails.Count;
             OrderDetail od = new OrderDetail();
@@ -498,18 +520,6 @@ namespace Week1
             } while (update_product_no != 0);
         }
 
-        static void UpadteOrder()
-        {
-            Console.Write("\nEnter Order Number : ");
-            int update_no = Convert.ToInt32(Console.ReadLine());
-            Show.showOrderDetails(update_no);
-            ChangeOrder();
-        }
-
-
-
-
-
 
 
 
@@ -517,34 +527,120 @@ namespace Week1
 
         static void DeleteOrder()
         {
+            bool flag = false;
             Console.Write("Enter No : ");
             int del_no = Convert.ToInt32(Console.ReadLine());
 
-            foreach(OrderDetail del_od in Program.AllOrderDetails)
+            foreach (OrderDetail del_od in Program.AllOrderDetails)
             {
-                if(del_od.OrderNoRef == del_no)
+                if (del_od.OrderNoRef == del_no)
                 {
                     del_od.Show();
-                    Console.Write("\nWant to delete? (yes/no) : ");
-                    string ans = Console.ReadLine().ToLower();
-
-                    if (ans.Equals("yes"))
-                    {
-                        Program.AllOrderDetails.Remove(del_od);
-
-                        foreach (Order del_o in Program.AllOrder)
-                        {
-                            if (del_o.OrderNo == del_no)
-                            {
-                                Program.AllOrder.Remove(del_o);
-                                return;
-                            }
-                        }
-                    }
-                }   
+                }
             }
 
+            Console.Write("\nWant to delete? (yes/no) : ");
+            string ans = Console.ReadLine().ToLower();
 
+            if (ans.Equals("yes"))
+            {
+                ArrayList itemsToRemove1 = new ArrayList();
+
+                foreach (OrderDetail del_od in Program.AllOrderDetails) 
+                {
+                    if (del_od.OrderNoRef == del_no)
+                    {
+                        itemsToRemove1.Add(del_od);
+                    }
+                }
+
+                foreach(OrderDetail d in itemsToRemove1) 
+                {
+                    Program.AllOrderDetails.Remove(d);
+                }
+
+                foreach (Order del_o in AllOrder)
+                {
+                    if (del_o.OrderNo == del_no)
+                    {
+                        AllOrder.Remove(del_o);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        static void ProductStatus()
+        {
+            int up_no;
+            int len = Program.AllProductDetails.Count;
+
+            do
+            {
+                Show.showProductAvilability();
+                Console.Write("Enter No : ");
+                up_no = Convert.ToInt32(Console.ReadLine());
+
+                for (int i = 0; i < len; i++)
+                {
+                    Product p = (Product)Program.AllProductDetails[i];
+                    if (p.ProductNo == up_no)
+                    {
+                        bool status = p.IsActive;
+                        p.IsActive = !status;
+                        break;
+                    }
+                }
+            } while (up_no != 0);
+        }
+
+
+
+        static void LastDetails(bool all=false)
+        {
+            Console.Write("Enter Customer name : ");
+            string name = Console.ReadLine().ToLower();
+
+
+            ArrayList temp = Program.AllOrder;
+            temp.Reverse();
+
+            Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\t\tAmount\t\tDiscount\t\tTotal\t\tDate");
+            foreach(Order o in temp)
+            {
+                if (o.CustomerDetail.CustomerName.Equals(name))
+                {
+                    int i = o.OrderNo;
+                    foreach (OrderDetail od in AllOrderDetails)
+                    {
+                        if (i == od.OrderNoRef)
+                        {
+                            Show.showLastCustomer(od);
+                        }
+                    }
+                    if (!all)
+                        break;
+                }
+            }
+        }
+
+        static void LastUnitPrice()
+        {
+            Console.WriteLine("Enter Product name : ");
+            string name = Console.ReadLine();
+
+            ArrayList temp = Program.AllOrderDetails;
+            temp.Reverse();
+
+            foreach (OrderDetail od in temp)
+            {
+                if (od.ProductDetail.ProductName.Equals(name))
+                {
+                    Console.WriteLine("Last Unit Price of {0} is {1}", od.ProductDetail.ProductName, od.UnitPrice);
+                    break;
+                }
+            }
         }
 
         static void Main(string[] args)
@@ -555,7 +651,10 @@ namespace Week1
                 Console.WriteLine("1. Add Order");
                 Console.WriteLine("2. Update Order");
                 Console.WriteLine("3. Delete Order");
-                Console.WriteLine("4. Exit");
+                Console.WriteLine("4. Product Avilability");
+                Console.WriteLine("5. Last Order Detail");
+                Console.WriteLine("6. Last Order's UnitPrice");
+                Console.WriteLine("0. Exit");
 
                 input = Convert.ToInt32(Console.ReadLine());
 
@@ -571,8 +670,17 @@ namespace Week1
                     case 3:
                         DeleteOrder();
                         break;
+                    case 4:
+                        ProductStatus();
+                        break;
+                    case 5:
+                        LastDetails();
+                        break;
+                    case 6:
+                        LastUnitPrice();
+                        break;
                 }
-            } while (input != 4);
+            } while (input != 0);
         }
     }
 }
