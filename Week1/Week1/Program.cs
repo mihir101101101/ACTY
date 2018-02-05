@@ -527,7 +527,6 @@ namespace Week1
 
         static void DeleteOrder()
         {
-            bool flag = false;
             Console.Write("Enter No : ");
             int del_no = Convert.ToInt32(Console.ReadLine());
 
@@ -683,4 +682,5 @@ namespace Week1
             } while (input != 0);
         }
     }
+
 }
