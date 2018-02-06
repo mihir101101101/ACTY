@@ -126,11 +126,17 @@ namespace Week1
 
     class Validation
     {
-        public static bool IsOrderNo(int no)
+        public static bool IsOrderNo(string no)
         {
+            if (no.Equals(""))
+            {
+                return true;
+            }
+
+            int n = Convert.ToInt32(no);
             foreach (Order v_order in Program.AllOrder)
             {
-                if (no == v_order.OrderNo)
+                if (n == v_order.OrderNo)
                     return true;
             }
             return false;
@@ -139,6 +145,13 @@ namespace Week1
         public static bool IsEmpty(string name)
         {
             if (name == "")
+                return true;
+            return false;
+        }
+
+        public static bool IsEmpty(int name)
+        {
+            if (name == 0)
                 return true;
             return false;
         }
@@ -179,6 +192,11 @@ namespace Week1
 
         public static void showAllEmployee()
         {
+            if (Program.AllEmployeeDetails.Count <= 0)
+            {
+                Console.WriteLine("No Employee Avilable");
+                return;
+            }
             Console.WriteLine("NO\tName\t\tAddress\t\tCity\t\tState\tPin Code");
             foreach (Employee e in Program.AllEmployeeDetails)
             {
@@ -188,6 +206,11 @@ namespace Week1
 
         public static void showAllCustomer()
         {
+            if (Program.AllCustomerDetails.Count <= 0)
+            {
+                Console.WriteLine("No Customer Avilable");
+                return;
+            }
             Console.WriteLine("NO\tName\tAddress\t\tCity\tState\tPin Code\tCountry");
             foreach (Customer c in Program.AllCustomerDetails)
             {
@@ -197,6 +220,11 @@ namespace Week1
 
         public static void showAllProduct()
         {
+            if (Program.AllProductDetails.Count <= 0)
+            {
+                Console.WriteLine("No Product Avilable");
+                return;
+            }
             Console.WriteLine("NO\tName\tPrice\tStatus");
             foreach (Product p in Program.AllProductDetails)
             {
@@ -207,6 +235,11 @@ namespace Week1
 
         public static void showAllOrder()
         {
+            if (Program.AllOrder.Count <= 0)
+            {
+                Console.WriteLine("No Order Avilable");
+                return;
+            }
             Console.WriteLine("NO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
             foreach (Order o in Program.AllOrder)
             {
@@ -300,20 +333,45 @@ namespace Week1
                 return (Customer)AllCustomerDetails[t.Item2];
             }
 
-            Console.Write("Enter Address : ");
-            string C_addr = Console.ReadLine();
+            string C_addr;
+            do
+            {
+                Console.Write("Enter Address : ");
+                C_addr = Console.ReadLine();
+            } while (Validation.IsEmpty(C_addr));
 
-            Console.Write("Enter City : ");
-            string C_city = Console.ReadLine();
 
-            Console.Write("Enter State : ");
-            string C_state = Console.ReadLine();
+            string C_city;
+            do
+            {
+                Console.Write("Enter City : ");
+                C_city = Console.ReadLine();
+            } while (Validation.IsEmpty(C_city));
 
-            Console.Write("Enter Postal Code : ");
-            int C_postal = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("Enter Country : ");
-            string C_country = Console.ReadLine();
+            string C_state;
+            do
+            {
+                Console.Write("Enter State : ");
+                C_state = Console.ReadLine();
+            } while (Validation.IsEmpty(C_state));
+
+            string post;
+            do
+            {
+                Console.Write("Enter Postal Code : ");
+                post = Console.ReadLine();
+            } while (Validation.IsEmpty(post));
+            int C_postal = Convert.ToInt32(post);
+
+
+            string C_country;
+            do
+            { 
+                Console.Write("Enter Country : ");
+                C_country = Console.ReadLine();
+            }while(Validation.IsEmpty(C_country));
+
 
             Customer c = new Customer();
             c.CustomerNo = C_no;
@@ -358,17 +416,37 @@ namespace Week1
                 return (Employee)AllEmployeeDetails[t.Item2];
             }
 
-            Console.Write("Enter Address : ");
-            string E_addr = Console.ReadLine();
+            string E_addr;
+            do
+            {
+                Console.Write("Enter Address : ");
+                E_addr = Console.ReadLine();
+            }while(Validation.IsEmpty(E_addr));
 
-            Console.Write("Enter City : ");
-            string E_city = Console.ReadLine();
+            string E_city;
+            do
+            {
+                Console.Write("Enter City : ");
+                E_city = Console.ReadLine();
+            } while (Validation.IsEmpty(E_city));
 
-            Console.Write("Enter State : ");
-            string E_state = Console.ReadLine();
+            string E_state;
+            do
+            {
+                Console.Write("Enter State : ");
+                E_state = Console.ReadLine();
+            } while (Validation.IsEmpty(E_state));
 
-            Console.Write("Enter Postal Code : ");
-            int E_postal = Convert.ToInt32(Console.ReadLine());
+            
+            int E_postal;
+            string post;
+            do
+            {
+                Console.Write("Enter Postal Code : ");
+                post = Console.ReadLine();
+            } while (Validation.IsEmpty(post));
+            E_postal = Convert.ToInt32(post);
+
 
             Employee e = new Employee();
             e.EmployeeNo = E_no;
@@ -405,16 +483,23 @@ namespace Week1
                 return (Product)AllProductDetails[t.Item2];
             }
 
-            Console.Write("Enter Unit Price : ");
-            int P_unit = Convert.ToInt32(Console.ReadLine());
+
+            string post;
+            do
+            {
+                Console.Write("Enter Unit Price : ");
+                post = Console.ReadLine();
+            } while (Validation.IsEmpty(post));
+            int P_unit = Convert.ToInt32(post);
+
+
 
             Console.Write("Is Product Active( Yes/No ) : ");
             string ch = Console.ReadLine().ToLower();
 
-            bool P_active = false;
-
-            if (ch.Equals("yes"))
-                P_active = true;
+            bool P_active = true;
+            if (ch.Equals("no"))
+                P_active = false;
 
             Product p = new Product();
             p.ProductNo = P_no;
@@ -428,13 +513,13 @@ namespace Week1
 
         static void AddOrder()
         {
-            int O_no;
-
+            string no;
             do
             {
                 Console.Write("Order Number : ");
-                O_no = Convert.ToInt32(Console.ReadLine());
-            } while (Validation.IsOrderNo(O_no));
+                no = Console.ReadLine();
+            } while (Validation.IsOrderNo(no));
+            int O_no = Convert.ToInt32(no);
 
             int len = AllEmployeeDetails.Count;
 
@@ -644,7 +729,7 @@ namespace Week1
 
         public static void View()
         {
-            Console.WriteLine("=================================================================================");
+            Console.WriteLine("\n\n\n\n=================================================================================");
             Console.WriteLine("1. Employee\t\t2. Customer\t\t3. Product\t\t4. Order");
             Console.WriteLine("=================================================================================");
 
@@ -719,17 +804,10 @@ namespace Week1
             int input;
             do
             {
-                Console.WriteLine("===============================================================================================================");
-                Console.WriteLine("1. Add Order\t\t\t2. Update Order\t\t\t\t3. Delete Order\t\t\t4. Show");
+                Console.WriteLine("\n\n\n\n===============================================================================================================");
+                Console.WriteLine("1. Add Order\t\t\t2. Update Order\t\t\t\t3. Delete Order\t\t\t4. View Details");
                 Console.WriteLine("5. Last Order Detail\t\t6. Last Order's UnitPrice\t\t7. Product Avilability\t\t0. Exit");
                 Console.WriteLine("===============================================================================================================");
-                //Console.WriteLine("2. Update Order");
-                //Console.WriteLine("3. Delete Order");
-                //Console.WriteLine("4. Product Avilability");
-                //Console.WriteLine("5. Last Order Detail");
-                //Console.WriteLine("6. Last Order's UnitPrice");
-                //Console.WriteLine("7. Show");
-                //Console.WriteLine("0. Exit");
 
                 input = Convert.ToInt32(Console.ReadLine());
 
@@ -745,7 +823,7 @@ namespace Week1
                     case 3:
                         DeleteOrder();
                         break;
-                    case 4:
+                    case 7:
                         ProductStatus();
                         break;
                     case 5:
@@ -754,7 +832,7 @@ namespace Week1
                     case 6:
                         LastUnitPrice();
                         break;
-                    case 7:
+                    case 4:
                         View();
                         break;
                 }
