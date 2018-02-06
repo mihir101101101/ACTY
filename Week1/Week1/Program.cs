@@ -176,6 +176,51 @@ namespace Week1
         {
             Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}\t\t{6}\t\t{7}", od.ProductDetail.ProductNo, od.ProductDetail.ProductName, od.UnitPrice, od.Quantity, od.Amount, od.DiscountAmount, od.GrandTotal, od.CreatedDate);
         }
+
+        public static void showAllEmployee()
+        {
+            Console.WriteLine("NO\tName\t\tAddress\t\tCity\t\tState\tPin Code");
+            foreach (Employee e in Program.AllEmployeeDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}", e.EmployeeNo, e.FirstName+" "+e.LastName, e.Address, e.City, e.State, e.PstalCode);
+            }
+        }
+
+        public static void showAllCustomer()
+        {
+            Console.WriteLine("NO\tName\tAddress\t\tCity\tState\tPin Code\tCountry");
+            foreach (Customer c in Program.AllCustomerDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t\t{6}", c.CustomerNo, c.CustomerName, c.Address, c.City, c.State, c.PstalCode, c.Country);
+            }
+        }
+
+        public static void showAllProduct()
+        {
+            Console.WriteLine("NO\tName\tPrice\tStatus");
+            foreach (Product p in Program.AllProductDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}\t{3}", p.ProductNo, p.ProductName, p.UnitPrice, p.IsActive);
+            }
+
+        }
+
+        public static void showAllOrder()
+        {
+            Console.WriteLine("NO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
+            foreach (Order o in Program.AllOrder)
+            {
+                Console.WriteLine("{0}\t{1}\t\t{2}\t\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}",o.OrderNo, o.CustomerDetail.CustomerName, o.EmployeeDetail.FirstName, o.OrderDate, o.ShipAddress, o.ShipCity, o.ShipState, o.ShipPostalCode, o.ShipCountry,o.CreatedDate);
+                Console.WriteLine("\nProduct name\tPrice\tQuantity\tAmount\tDiscount\tTotal\tDate\t\t\tChange Date");
+                int no = o.OrderNo;
+                foreach (OrderDetail od in Program.AllOrderDetails)
+                {
+                    if (od.OrderNoRef == no)
+                        Console.WriteLine("{0}\t\t{1}\t{2}\t\t{3}\t{4}\t\t{5}\t{6}\t{7}",od.ProductDetail.ProductName, od.UnitPrice, od.Quantity, od.Amount, od.DiscountAmount, od.GrandTotal, od.CreatedDate, od.ModifiedDate);
+                }
+            }
+        }
+
     }
 
     class Program
@@ -596,6 +641,33 @@ namespace Week1
 
 
 
+
+        public static void View()
+        {
+            Console.WriteLine("=================================================================================");
+            Console.WriteLine("1. Employee\t\t2. Customer\t\t3. Product\t\t4. Order");
+            Console.WriteLine("=================================================================================");
+
+
+            int input = Convert.ToInt32(Console.ReadLine());
+
+            switch (input)
+            {
+                case 1:
+                    Show.showAllEmployee();
+                    break;
+                case 2:
+                    Show.showAllCustomer();
+                    break;
+                case 3:
+                    Show.showAllProduct();
+                    break;
+                case 4:
+                    Show.showAllOrder();
+                    break;
+            }
+        }
+
         static void LastDetails(bool all=false)
         {
             Console.Write("Enter Customer name : ");
@@ -647,13 +719,17 @@ namespace Week1
             int input;
             do
             {
-                Console.WriteLine("1. Add Order");
-                Console.WriteLine("2. Update Order");
-                Console.WriteLine("3. Delete Order");
-                Console.WriteLine("4. Product Avilability");
-                Console.WriteLine("5. Last Order Detail");
-                Console.WriteLine("6. Last Order's UnitPrice");
-                Console.WriteLine("0. Exit");
+                Console.WriteLine("===============================================================================================================");
+                Console.WriteLine("1. Add Order\t\t\t2. Update Order\t\t\t\t3. Delete Order\t\t\t4. Show");
+                Console.WriteLine("5. Last Order Detail\t\t6. Last Order's UnitPrice\t\t7. Product Avilability\t\t0. Exit");
+                Console.WriteLine("===============================================================================================================");
+                //Console.WriteLine("2. Update Order");
+                //Console.WriteLine("3. Delete Order");
+                //Console.WriteLine("4. Product Avilability");
+                //Console.WriteLine("5. Last Order Detail");
+                //Console.WriteLine("6. Last Order's UnitPrice");
+                //Console.WriteLine("7. Show");
+                //Console.WriteLine("0. Exit");
 
                 input = Convert.ToInt32(Console.ReadLine());
 
@@ -678,9 +754,11 @@ namespace Week1
                     case 6:
                         LastUnitPrice();
                         break;
+                    case 7:
+                        View();
+                        break;
                 }
             } while (input != 0);
         }
     }
-
 }
