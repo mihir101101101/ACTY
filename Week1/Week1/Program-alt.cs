@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication2
+namespace Week1
 {
     class Employee
     {
@@ -127,6 +127,13 @@ namespace ConsoleApplication2
 
     class Validation
     {
+        public static bool IsStop(string no)
+        {
+            if (no.Equals("-1"))
+                return true;
+            return false;
+        }
+
         public static bool IsNumber(string number)
         {
             return (System.Text.RegularExpressions.Regex.IsMatch(number, "^[0-9]+$"));
@@ -137,6 +144,10 @@ namespace ConsoleApplication2
             if (no.Equals(""))
             {
                 return true;
+            }
+            else if(no.Equals("-1"))
+            {
+                Program.start();
             }
             else
             {
@@ -184,6 +195,32 @@ namespace ConsoleApplication2
 
     class Show
     {
+        public static void showAllCustomerName()
+        {
+            Console.WriteLine("NO\tName\t\tCity");
+            foreach (Customer c in Program.AllCustomerDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t\t{2}", c.CustomerNo, c.CustomerName, c.City);
+            }
+        }
+
+        public static void showAllEmployeeName()
+        {
+            Console.WriteLine("NO\tName\t\tCity");
+            foreach (Employee e in Program.AllEmployeeDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t\t{2}", e.EmployeeNo, e.FirstName + " " + e.LastName, e.City);
+            }
+        }
+
+        public static void showAllProductName()
+        {
+            foreach (Product p in Program.AllProductDetails)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}\t{3}", p.ProductNo, p.ProductName, p.UnitPrice, p.IsActive);
+            }
+        }
+
         public static void showOrderDetails(int no)
         {
             Console.WriteLine("No\t\tName\t\tUTP\t\tQTY");
@@ -248,7 +285,6 @@ namespace ConsoleApplication2
             {
                 Console.WriteLine("{0}\t{1}\t{2}\t{3}", p.ProductNo, p.ProductName, p.UnitPrice, p.IsActive);
             }
-
         }
 
         public static void showAllOrder()
@@ -344,7 +380,7 @@ namespace ConsoleApplication2
             }
             return new Tuple<bool, int>(false, 0);
         }
-        
+
         static void UpadteOrder()
         {
             Console.Write("\nEnter Order Number : ");
@@ -354,15 +390,13 @@ namespace ConsoleApplication2
             int index = 0;
             int len = Program.AllOrderDetails.Count;
             OrderDetail od = new OrderDetail();
+            
             int update_product_no;
-
             do
             {
                 bool flag = false;
                 Console.Write("\nEnter Product Number : ");
                 update_product_no = Convert.ToInt32(Console.ReadLine());
-                int c_quantity;
-
                 for (int i = 0; i < len; i++)
                 {
                     od = (OrderDetail)Program.AllOrderDetails[i];
@@ -476,11 +510,13 @@ namespace ConsoleApplication2
             ArrayList temp = Program.AllOrder;
             temp.Reverse();
 
-            Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\t\tAmount\t\tDiscount\t\tTotal\t\tDate");
+            bool flag = true;
+            Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\tAmount\t\tDiscount\t\tTotal\t\tDate");
             foreach (Order o in temp)
             {
                 if (o.CustomerDetail.CustomerName.Equals(name))
                 {
+                    flag = false;
                     int i = o.OrderNo;
                     foreach (OrderDetail od in AllOrderDetails)
                     {
@@ -493,11 +529,15 @@ namespace ConsoleApplication2
                         break;
                 }
             }
+            if (flag)
+            {
+                Console.WriteLine("\nNo Data Found...!");
+            }
         }
 
         static void LastUnitPrice()
         {
-            Console.WriteLine("Enter Product name : ");
+            Console.Write("Enter Product name : ");
             string name = Console.ReadLine();
 
             ArrayList temp = Program.AllOrderDetails;
@@ -593,12 +633,16 @@ namespace ConsoleApplication2
 
         static int fillCustomerDetails()
         {
+            Show.showAllCustomerName();
             string C_name;
             do
             {
                 Console.Write("\nEnter Customer Name : ");
                 C_name = Console.ReadLine();
             } while (Validation.IsEmpty(C_name));
+
+            if (Validation.IsStop(C_name))
+                Program.start();
 
             var t = CheckAvilability(C_name, "Customer");
 
@@ -611,6 +655,7 @@ namespace ConsoleApplication2
 
         static int fillEmployeeDetails()
         {
+            Show.showAllEmployeeName();
             string E_fname, E_lname;
 
             do
@@ -619,12 +664,18 @@ namespace ConsoleApplication2
                 E_fname = Console.ReadLine();
             } while (Validation.IsEmpty(E_fname));
 
+            if (Validation.IsStop(E_fname))
+                Program.start();
+
             do
             {
                 Console.Write("Enter Last Name : ");
                 E_lname = Console.ReadLine();
             } while (Validation.IsEmpty(E_lname));
-
+            
+            if (Validation.IsStop(E_lname))
+                Program.start();
+            
             string E_name = E_fname + " " + E_lname;
 
             var t = CheckAvilability(E_name, "Employee");
@@ -638,6 +689,7 @@ namespace ConsoleApplication2
 
         static Product fillProductDetails()
         {
+            Show.showAllProductName();
             int P_no = AllProductDetails.Count + 1;
 
             string P_name;
@@ -646,6 +698,9 @@ namespace ConsoleApplication2
                 Console.Write("\nEnter Product Name : ");
                 P_name = Console.ReadLine();
             } while (Validation.IsEmpty(P_name));
+            
+            if (Validation.IsStop(P_name))
+                Program.start();
 
             var t = CheckAvilability(P_name, "Product");
 
@@ -664,6 +719,10 @@ namespace ConsoleApplication2
                 Console.Write("Order Number : ");
                 no = Console.ReadLine();
             } while (Validation.IsOrderNo(no) || !Validation.IsNumber(no));
+            
+            if (Validation.IsStop(no))
+                Program.start();
+            
             int O_no = Convert.ToInt32(no);
 
             Order o = new Order();
@@ -674,8 +733,8 @@ namespace ConsoleApplication2
             int chk;
             do
             {
-                chk = fillCustomerDetails();   
-            }while(chk == -1);
+                chk = fillCustomerDetails();
+            } while (chk == -1);
             o.CustomerDetail = (Customer)AllCustomerDetails[chk];
 
             int ehk;
@@ -783,9 +842,8 @@ namespace ConsoleApplication2
             } while (wannadd != "no");
         }
 
-        static void Main(string[] args)
+        public static void start()
         {
-            Program p = new Program();
             int input;
             do
             {
@@ -797,6 +855,9 @@ namespace ConsoleApplication2
 
                 switch (input)
                 {
+                    case -1:
+                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                        break;
                     case 1:
                         AddOrder();
                         AddOrderDetails();
@@ -821,6 +882,12 @@ namespace ConsoleApplication2
                         break;
                 }
             } while (input != 0);
+        }
+
+        static void Main(string[] args)
+        {            
+            Program p = new Program();
+            start();
         }
     }
 }
