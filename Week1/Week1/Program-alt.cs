@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Week1
+namespace ConsoleApplication2
 {
     class Employee
     {
@@ -30,12 +30,12 @@ namespace Week1
     {
         private int productno;
         private string productname;
-        private int unitprice;
+        private double unitprice;
         private bool isactive;
 
         public int ProductNo { get { return productno; } set { productno = value; } }
         public string ProductName { get { return productname; } set { productname = value; } }
-        public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
+        public double UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public bool IsActive { get { return isactive; } set { isactive = value; } }
     }
 
@@ -93,21 +93,21 @@ namespace Week1
     {
         private int ordernoref;
         private Product productdetail;
-        private int unitprice;
+        private double unitprice;
         private int quantity;
-        private int amount;
-        private int discountamount;
-        private int grandtotal;
+        private double amount;
+        private double discountamount;
+        private double grandtotal;
         private DateTime createddate;
         private DateTime modifieddate;
 
         public int OrderNoRef { get { return ordernoref; } set { ordernoref = value; } }
         public Product ProductDetail { get { return productdetail; } set { productdetail = value; } }
-        public int UnitPrice { get { return unitprice; } set { unitprice = value; } }
+        public double UnitPrice { get { return unitprice; } set { unitprice = value; } }
         public int Quantity { get { return quantity; } set { quantity = value; } }
-        public int Amount { get { return amount; } set { amount = value; } }
-        public int DiscountAmount { get { return discountamount; } set { discountamount = value; } }
-        public int GrandTotal { get { return grandtotal; } set { grandtotal = value; } }
+        public double Amount { get { return amount; } set { amount = value; } }
+        public double DiscountAmount { get { return discountamount; } set { discountamount = value; } }
+        public double GrandTotal { get { return grandtotal; } set { grandtotal = value; } }
         public DateTime CreatedDate { get { return createddate; } set { createddate = value; } }
         public DateTime ModifiedDate { get { return modifieddate; } set { modifieddate = value; } }
 
@@ -145,7 +145,7 @@ namespace Week1
             {
                 return true;
             }
-            else if(no.Equals("-1"))
+            else if (no.Equals("-1"))
             {
                 Program.start();
             }
@@ -294,7 +294,7 @@ namespace Week1
                 Console.WriteLine("No Order Avilable");
                 return;
             }
-            Console.WriteLine("NO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
+            Console.WriteLine("\n\n\n\nNO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
             foreach (Order o in Program.AllOrder)
             {
                 Console.WriteLine("{0}\t{1}\t\t{2}\t\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}", o.OrderNo, o.CustomerDetail.CustomerName, o.EmployeeDetail.FirstName, o.OrderDate, o.ShipAddress, o.ShipCity, o.ShipState, o.ShipPostalCode, o.ShipCountry, o.CreatedDate);
@@ -346,6 +346,58 @@ namespace Week1
             AddProduct(Plist);
         }
 
+        static void AddCustomer(List<string[]> list)
+        {
+            foreach (string[] str in list)
+            {
+                Customer c = new Customer();
+                c.CustomerNo = Convert.ToInt32(str[0]);
+                c.CustomerName = str[1];
+                c.Address = str[2];
+                c.City = str[3];
+                c.State = str[4];
+                c.PstalCode = Convert.ToInt32(str[5]);
+                c.Country = str[6];
+
+                AllCustomerDetails.Add(c);
+            }
+        }
+
+        static void AddEmployee(List<string[]> list)
+        {
+            foreach (string[] str in list)
+            {
+                Employee e = new Employee();
+                e.EmployeeNo = Convert.ToInt32(str[0]);
+                e.FirstName = str[1];
+                e.LastName = str[2];
+                e.Address = str[3];
+                e.City = str[4];
+                e.State = str[5];
+                e.PstalCode = Convert.ToInt32(str[6]);
+
+                AllEmployeeDetails.Add(e);
+            }
+        }
+
+        static void AddProduct(List<string[]> list)
+        {
+            foreach (string[] str in list)
+            {
+                Product p = new Product();
+                p.ProductNo = Convert.ToInt32(str[0]);
+                p.ProductName = str[1];
+                p.UnitPrice = Convert.ToInt32(str[2]);
+                string s = str[3];
+                if (s.Equals("yes"))
+                    p.IsActive = true;
+                else
+                    p.IsActive = false;
+
+                AllProductDetails.Add(p);
+            }
+        }
+
         static Tuple<bool, int> CheckAvilability(string name, string InWhich)
         {
             if (InWhich == "Employee")
@@ -390,7 +442,7 @@ namespace Week1
             int index = 0;
             int len = Program.AllOrderDetails.Count;
             OrderDetail od = new OrderDetail();
-            
+
             int update_product_no;
             do
             {
@@ -579,59 +631,9 @@ namespace Week1
             }
         }
 
-        static void AddCustomer(List<string[]> list)
-        {
-            foreach (string[] str in list)
-            {
-                Customer c = new Customer();
-                c.CustomerNo = Convert.ToInt32(str[0]);
-                c.CustomerName = str[1];
-                c.Address = str[2];
-                c.City = str[3];
-                c.State = str[4];
-                c.PstalCode = Convert.ToInt32(str[5]);
-                c.Country = str[6];
+       
 
-                AllCustomerDetails.Add(c);
-            }
-        }
-
-        static void AddEmployee(List<string[]> list)
-        {
-            foreach (string[] str in list)
-            {
-                Employee e = new Employee();
-                e.EmployeeNo = Convert.ToInt32(str[0]);
-                e.FirstName = str[1];
-                e.LastName = str[2];
-                e.Address = str[3];
-                e.City = str[4];
-                e.State = str[5];
-                e.PstalCode = Convert.ToInt32(str[6]);
-
-                AllEmployeeDetails.Add(e);
-            }
-        }
-
-        static void AddProduct(List<string[]> list)
-        {
-            foreach (string[] str in list)
-            {
-                Product p = new Product();
-                p.ProductNo = Convert.ToInt32(str[0]);
-                p.ProductName = str[1];
-                p.UnitPrice = Convert.ToInt32(str[2]);
-                string s = str[3];
-                if (s.Equals("yes"))
-                    p.IsActive = true;
-                else
-                    p.IsActive = false;
-
-                AllProductDetails.Add(p);
-            }
-        }
-
-        static int fillCustomerDetails()
+        static Customer fillCustomerDetails()
         {
             Show.showAllCustomerName();
             string C_name;
@@ -648,12 +650,12 @@ namespace Week1
 
             if (t.Item1)
             {
-                return t.Item2;
+                return (Customer)Program.AllCustomerDetails[t.Item2];
             }
-            return -1;
+            return fillCustomerDetails();
         }
 
-        static int fillEmployeeDetails()
+        static Employee fillEmployeeDetails()
         {
             Show.showAllEmployeeName();
             string E_fname, E_lname;
@@ -672,33 +674,32 @@ namespace Week1
                 Console.Write("Enter Last Name : ");
                 E_lname = Console.ReadLine();
             } while (Validation.IsEmpty(E_lname));
-            
+
             if (Validation.IsStop(E_lname))
                 Program.start();
-            
+
             string E_name = E_fname + " " + E_lname;
 
             var t = CheckAvilability(E_name, "Employee");
 
             if (t.Item1)
             {
-                return t.Item2;
+                return (Employee)Program.AllEmployeeDetails[t.Item2];
             }
-            return -1;
+            return fillEmployeeDetails();
         }
 
         static Product fillProductDetails()
         {
             Show.showAllProductName();
-            int P_no = AllProductDetails.Count + 1;
-
+            
             string P_name;
             do
             {
                 Console.Write("\nEnter Product Name : ");
                 P_name = Console.ReadLine();
             } while (Validation.IsEmpty(P_name));
-            
+
             if (Validation.IsStop(P_name))
                 Program.start();
 
@@ -719,31 +720,16 @@ namespace Week1
                 Console.Write("Order Number : ");
                 no = Console.ReadLine();
             } while (Validation.IsOrderNo(no) || !Validation.IsNumber(no));
-            
+
             if (Validation.IsStop(no))
                 Program.start();
-            
+
             int O_no = Convert.ToInt32(no);
 
             Order o = new Order();
             o.OrderNo = O_no;
-
-
-
-            int chk;
-            do
-            {
-                chk = fillCustomerDetails();
-            } while (chk == -1);
-            o.CustomerDetail = (Customer)AllCustomerDetails[chk];
-
-            int ehk;
-            do
-            {
-                ehk = fillEmployeeDetails();
-            } while (ehk == -1);
-            o.EmployeeDetail = (Employee)AllEmployeeDetails[ehk];
-
+            o.CustomerDetail = fillCustomerDetails();
+            o.EmployeeDetail = fillEmployeeDetails();
             o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
             o.ShipName = o.CustomerDetail.CustomerName;
             o.ShipAddress = o.CustomerDetail.Address;
@@ -754,13 +740,12 @@ namespace Week1
             o.CreatedDate = DateTime.Today;
             o.ModifiedDate = DateTime.Today;
 
-            AllOrder.Add(o);
+            AddOrderDetails(o);
+            //AllOrder.Add(o);
         }
 
-        static void AddOrderDetails()
+        static void AddOrderDetails(Order temp_o)
         {
-            int len = AllOrder.Count;
-            Order temp_o = (Order)AllOrder[len - 1];
             string wannadd;
 
             do
@@ -773,15 +758,19 @@ namespace Week1
                 {
                     Console.Write("Product Unit Price is {0} (Enter to skip) : ", od.ProductDetail.UnitPrice);
                     string price = Console.ReadLine();
-                    int OD_unit;
+                    double OD_unit = 0;
 
                     if (price.Equals(""))
                     {
                         OD_unit = od.ProductDetail.UnitPrice;
                     }
+                    else if (price.Equals("-1"))
+                    {
+                        Program.start();
+                    }
                     else
                     {
-                        OD_unit = Convert.ToInt32(price);
+                        OD_unit = Convert.ToDouble(price);
                     }
 
                     string qt;
@@ -790,15 +779,25 @@ namespace Week1
                     {
                         Console.Write("Enter Quantity (Enter to skip) (default 1) : ");
                         qt = Console.ReadLine();
-                        if (qt.Equals(""))
+                        if (qt.Equals("") || qt.Equals("-1"))
                         {
                             break;
                         }
-                    } while (Validation.IsQuantity(qt));
+                        else
+                        {
 
+                        }
+                    } while (Validation.IsQuantity(qt));
+                    if (!qt.Equals(""))
+                    {
+                        OD_quantity = Convert.ToInt32(qt);
+                    }
+
+                    if (qt.Equals("-1"))
+                    { Program.start(); }
 
                     string dis;
-                    int OD_discount = 0;
+                    double OD_discount = 0;
                     bool flag = true;
                     do
                     {
@@ -809,6 +808,8 @@ namespace Week1
                             OD_discount = 0;
                             flag = false;
                         }
+                        else if (dis.Equals("-1"))
+                        { Program.start(); }
                         else
                         {
                             if (Validation.IsNumber(dis))
@@ -825,12 +826,13 @@ namespace Week1
 
                     od.UnitPrice = OD_unit;
                     od.Quantity = OD_quantity;
-                    od.Amount = od.ProductDetail.UnitPrice * OD_quantity;
+                    od.Amount = OD_unit * OD_quantity;
                     od.DiscountAmount = OD_discount;
                     od.GrandTotal = od.Amount - OD_discount;
                     od.CreatedDate = OD_create;
                     od.ModifiedDate = OD_modifi;
 
+                    AllOrder.Add(temp_o);
                     AllOrderDetails.Add(od);
                 }
                 else
@@ -845,22 +847,26 @@ namespace Week1
         public static void start()
         {
             int input;
+            string inp;
             do
             {
                 Console.WriteLine("\n\n\n\n===============================================================================================================");
                 Console.WriteLine("1. Add Order\t\t\t2. Update Order\t\t\t\t3. Delete Order\t\t\t4. View Details");
                 Console.WriteLine("5. Last Order Detail\t\t6. Last Order's UnitPrice\t\t7. Product Avilability\t\t0. Exit");
                 Console.WriteLine("===============================================================================================================");
-                input = Convert.ToInt32(Console.ReadLine());
+                do
+                {
+                    inp = Console.ReadLine();
+                } while (!Validation.IsNumber(inp));
+                input = Convert.ToInt32(inp);
 
                 switch (input)
                 {
-                    case -1:
+                    case 0:
                         System.Diagnostics.Process.GetCurrentProcess().Kill();
                         break;
                     case 1:
                         AddOrder();
-                        AddOrderDetails();
                         break;
                     case 2:
                         UpadteOrder();
@@ -880,12 +886,15 @@ namespace Week1
                     case 4:
                         View();
                         break;
+                    default:
+                        Console.WriteLine("Wrong");
+                        break;
                 }
             } while (input != 0);
         }
 
         static void Main(string[] args)
-        {            
+        {
             Program p = new Program();
             start();
         }
