@@ -8,8 +8,21 @@ namespace ConsoleApplication2
 {
     class Validation
     {
+        public static bool IsCustomerShop(int no)
+        {
+            foreach (Order o in Program.AllOrder)
+            {
+                if (o.CustomerDetail.CustomerNo == no)
+                    return true;
+            }
+            return false;
+        }
+
         public static bool IsCustomer(string no)
         {
+            if (IsStop(no))
+                Program.start();
+
             if (IsNumber(no))
             {
                 int num = Convert.ToInt32(no);
@@ -24,6 +37,8 @@ namespace ConsoleApplication2
 
         public static bool IsEmployee(string no)
         {
+            if (IsStop(no))
+                Program.start();
             if(IsNumber(no))
             {
                 int num = Convert.ToInt32(no);
@@ -36,23 +51,48 @@ namespace ConsoleApplication2
             return false;
         }
 
+        public static bool IsProductAvail(int no, string num)
+        {
+            if (num.Equals("0"))
+            {
+                return false;
+            }
+            if(IsNumber(num))
+            {
+                int number = Convert.ToInt32(no);
+                foreach (OrderDetail od in Program.AllOrderDetails)
+                {
+                    if (no == od.OrderNoRef)
+                    {
+                        if (od.ProductDetail.ProductNo == number)
+                            return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         public static bool IsProduct(string no)
         {
+            if(no.Equals("0"))
+            {
+                return false;
+            }
             if (IsNumber(no))
             {
                 int num = Convert.ToInt32(no);
                 foreach (Product p in Program.AllProductDetails)
                 {
                     if (p.ProductNo == num)
-                        return true;
+                        return false;
                 }
             }
-            return false;
+            return true;
         }
 
         public static bool IsStop(string no)
         {
-            if (no.Equals("-1"))
+            if (no.Equals("0"))
                 return true;
             return false;
         }
@@ -87,6 +127,26 @@ namespace ConsoleApplication2
             return false;
         }
 
+        public static bool IsOrderAvail(string no)
+        {
+            if (no.Equals("0"))
+                return false;
+            if (no.Equals(""))
+                return true;
+            else
+            {
+                if (IsNumber(no))
+                {
+                    foreach (Order o in Program.AllOrder)
+                    {
+                        if (o.OrderNo == Convert.ToInt32(no))
+                            return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public static bool IsDiscount(string name)
         {
             if (IsNumber(name) || name.Equals(""))
@@ -112,7 +172,8 @@ namespace ConsoleApplication2
 
         public static bool IsQuantity(string no)
         {
-
+            if (no.Equals("0"))
+                return false;
             if (no.Equals(""))
                 return true;
             else if (IsNumber(no))
@@ -120,6 +181,22 @@ namespace ConsoleApplication2
                 int n = Convert.ToInt32(no);
                 if (n > 0)
                     return false;
+            }
+            return true;
+        }
+
+        public static bool IsShoped(string no)
+        {
+            if(no.Equals("0"))
+                return false;
+            if(IsNumber(no))
+            {
+                int num = Convert.ToInt32(no);
+                foreach(Product p in Program.AllProductDetails)  
+                {
+                    if(p.ProductNo == num)
+                        return false;
+                }
             }
             return true;
         }

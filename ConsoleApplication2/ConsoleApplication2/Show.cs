@@ -100,6 +100,20 @@ namespace ConsoleApplication2
             }
         }
 
+        public static void AllOrder()
+        {
+            if (Program.AllOrder.Count <= 0)
+            {
+                Console.WriteLine("No Order Avilable");
+                return;
+            }
+            Console.WriteLine("NO\t\tEmployee Name\t\tCustomer Name\t\tDate");
+            foreach (Order o in Program.AllOrder)
+            {
+                Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}", o.OrderNo, o.EmployeeDetail.FirstName + " " + o.EmployeeDetail.LastName, o.CustomerDetail.CustomerName, o.OrderDate);
+            }
+        }
+
         public static void showAllOrder()
         {
             if (Program.AllOrder.Count <= 0)
@@ -107,7 +121,7 @@ namespace ConsoleApplication2
                 Console.WriteLine("No Order Avilable");
                 return;
             }
-            Console.WriteLine("\n\n\n\nNO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
+            Console.WriteLine("\n\nNO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
             foreach (Order o in Program.AllOrder)
             {
                 Console.WriteLine("{0}\t{1}\t\t{2}\t\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}", o.OrderNo, o.CustomerDetail.CustomerName, o.EmployeeDetail.FirstName, o.OrderDate, o.ShipAddress, o.ShipCity, o.ShipState, o.ShipPostalCode, o.ShipCountry, o.CreatedDate);
@@ -118,6 +132,7 @@ namespace ConsoleApplication2
                     if (od.OrderNoRef == no)
                         Console.WriteLine("{0}\t\t{1}\t{2}\t\t{3}\t{4}\t\t{5}\t{6}\t{7}", od.ProductDetail.ProductName, od.UnitPrice, od.Quantity, od.Amount, od.DiscountAmount, od.GrandTotal, od.CreatedDate, od.ModifiedDate);
                 }
+                Console.WriteLine("\n\n\n\n");
             }
         }
 

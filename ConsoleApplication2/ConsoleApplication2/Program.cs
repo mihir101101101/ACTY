@@ -1,7 +1,8 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -132,8 +133,23 @@ namespace ConsoleApplication2
 
         static void UpadteOrder()
         {
-            Console.Write("\nEnter Order Number : ");
-            int update_no = Convert.ToInt32(Console.ReadLine());
+            Show.AllOrder();
+            if (AllOrder.Count == 0)
+            {
+                return;
+            }
+            string up_no;
+            do
+            {
+                Console.Write("\nEnter Order Number : ");
+                up_no = Console.ReadLine();
+            } while (Validation.IsOrderAvail(up_no));
+
+            if(up_no.Equals("0"))
+                start();
+
+            int update_no = Convert.ToInt32(up_no);
+
             Show.showOrderDetails(update_no);
 
             int index = 0;
@@ -141,11 +157,21 @@ namespace ConsoleApplication2
             OrderDetail od = new OrderDetail();
 
             int update_product_no;
+            string st;
             do
             {
                 bool flag = false;
-                Console.Write("\nEnter Product Number : ");
-                update_product_no = Convert.ToInt32(Console.ReadLine());
+                string pro_no;
+                do
+                {
+                    Console.Write("\nEnter Product Number : ");
+                    pro_no = Console.ReadLine();
+                } while (!Validation.IsNumber(pro_no));
+
+                if (pro_no.Equals("0"))
+                    start();
+
+                update_product_no = Convert.ToInt32(pro_no);
                 for (int i = 0; i < len; i++)
                 {
                     od = (OrderDetail)Program.AllOrderDetails[i];
@@ -177,53 +203,79 @@ namespace ConsoleApplication2
                 }
                 else
                 {
-                    Console.WriteLine("\nNo product avilable : ");
+                    Console.WriteLine("No product avilable");
                 }
-            } while (update_product_no != 0);
+
+                Console.Write("\nUpdate More? ( No : 0 ) : ");
+                st = Console.ReadLine();
+            } while (!st.Equals("0"));
         }
 
         static void DeleteOrder()
         {
-            Console.Write("Enter No : ");
-            int del_no = Convert.ToInt32(Console.ReadLine());
-
-            foreach (OrderDetail del_od in Program.AllOrderDetails)
+            Show.AllOrder();
+            if (AllOrder.Count == 0)
+                return;
+            string del;
+            do
             {
-                if (del_od.OrderNoRef == del_no)
+                do
                 {
-                    del_od.Show();
-                }
-            }
+                    Console.Write("Enter No : ");
+                    del = Console.ReadLine();
+                } while (!Validation.IsNumber(del));
 
-            Console.Write("\nWant to delete? (yes/no) : ");
-            string ans = Console.ReadLine().ToLower();
+                if (del.Equals("0"))
+                    start();
 
-            if (ans.Equals("yes"))
-            {
-                ArrayList itemsToRemove1 = new ArrayList();
+                int del_no = Convert.ToInt32(del);
 
+                bool flag = true;
                 foreach (OrderDetail del_od in Program.AllOrderDetails)
                 {
                     if (del_od.OrderNoRef == del_no)
                     {
-                        itemsToRemove1.Add(del_od);
+                        flag = false;
+                        del_od.Show();
                     }
                 }
 
-                foreach (OrderDetail d in itemsToRemove1)
+                if (flag)
                 {
-                    Program.AllOrderDetails.Remove(d);
+                    Console.WriteLine("No Order Avilable");
+                    break;
                 }
+                Console.Write("\nWant to delete? (Yes : 1 | No : 0) : ");
+                string ans = Console.ReadLine();
 
-                foreach (Order del_o in AllOrder)
+                if (ans.Equals("1"))
                 {
-                    if (del_o.OrderNo == del_no)
+                    ArrayList itemsToRemove1 = new ArrayList();
+
+                    foreach (OrderDetail del_od in Program.AllOrderDetails)
                     {
-                        AllOrder.Remove(del_o);
-                        break;
+                        if (del_od.OrderNoRef == del_no)
+                        {
+                            itemsToRemove1.Add(del_od);
+                        }
+                    }
+
+                    foreach (OrderDetail d in itemsToRemove1)
+                    {
+                        Program.AllOrderDetails.Remove(d);
+                    }
+
+                    foreach (Order del_o in AllOrder)
+                    {
+                        if (del_o.OrderNo == del_no)
+                        {
+                            AllOrder.Remove(del_o);
+                            break;
+                        }
                     }
                 }
-            }
+            } while (!del.Equals("0"));
+            
         }
 
         static void ProductStatus()
@@ -234,9 +286,17 @@ namespace ConsoleApplication2
             do
             {
                 Show.showProductAvilability();
-                Console.Write("Enter No : ");
-                up_no = Convert.ToInt32(Console.ReadLine());
+                string no;
+                do
+                {
+                    Console.Write("Enter Product No (Exit 0) : ");
+                    no = Console.ReadLine();
+                }while(Validation.IsProduct(no));
+                
+                if(no.Equals("0"))
+                    start();
 
+                up_no = Convert.ToInt32(no);
                 for (int i = 0; i < len; i++)
                 {
                     Product p = (Product)Program.AllProductDetails[i];
@@ -252,59 +312,75 @@ namespace ConsoleApplication2
 
         static void LastDetails(bool all = false)
         {
-            Console.Write("Enter Customer name : ");
-            string name = Console.ReadLine();
-
+            string name;
+            Show.showAllCustomerName();
+            do
+            {
+                Console.Write("Enter Customer no : ");
+                name = Console.ReadLine();
+            }while(!Validation.IsCustomer(name));
+            int no = Convert.ToInt32(name);
 
             ArrayList temp = Program.AllOrder;
             temp.Reverse();
 
-            bool flag = true;
-            Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\tAmount\t\tDiscount\t\tTotal\t\tDate");
-            foreach (Order o in temp)
+            if (Validation.IsCustomerShop(no))
             {
-                if (o.CustomerDetail.CustomerName.Equals(name))
+                Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\tAmount\t\tDiscount\t\tTotal\t\tDate");
+                foreach (Order o in temp)
                 {
-                    flag = false;
-                    int i = o.OrderNo;
-                    foreach (OrderDetail od in AllOrderDetails)
+                    if (o.CustomerDetail.CustomerNo == no)
                     {
-                        if (i == od.OrderNoRef)
+                        int i = o.OrderNo;
+                        foreach (OrderDetail od in AllOrderDetails)
                         {
-                            Show.showLastCustomer(od);
+                            if (i == od.OrderNoRef)
+                            {
+                                Show.showLastCustomer(od);
+                            }
                         }
                     }
-                    if (!all)
-                        break;
                 }
             }
-            if (flag)
+            else
             {
-                Console.WriteLine("\nNo Data Found...!");
+                Console.WriteLine("No Data Found...!");
             }
         }
 
         static void LastUnitPrice()
         {
-            Console.Write("Enter Product name : ");
-            string name = Console.ReadLine();
-
+            Show.showAllProduct();
+            string name;
+            do
+            {
+                Console.Write("Enter Product No : ");
+                name = Console.ReadLine();
+            } while (Validation.IsShoped(name));
+            
+            if(name.Equals("0"))
+                start();
+            int no = Convert.ToInt32(name);
+            
             ArrayList temp = Program.AllOrderDetails;
             temp.Reverse();
-
+            bool flag = true;
             foreach (OrderDetail od in temp)
             {
-                if (od.ProductDetail.ProductName.Equals(name))
+                if (od.ProductDetail.ProductNo == no)
                 {
+                    flag = false;
                     Console.WriteLine("Last Unit Price of {0} is {1}", od.ProductDetail.ProductName, od.UnitPrice);
                     break;
                 }
             }
+            if(flag)
+                Console.WriteLine("Not Shoped Yet");
         }
 
         public static void View()
         {
-            Console.WriteLine("\n\n\n\n=================================================================================");
+            Console.WriteLine("\n\n=================================================================================");
             Console.WriteLine("1. Employee\t\t2. Customer\t\t3. Product\t\t4. Order");
             Console.WriteLine("=================================================================================");
 
@@ -328,7 +404,7 @@ namespace ConsoleApplication2
             }
         }
 
-       
+
 
         static Customer fillCustomerDetails()
         {
@@ -380,13 +456,13 @@ namespace ConsoleApplication2
         static Product fillProductDetails()
         {
             Show.showAllProductName();
-            
+
             string P_no;
             do
             {
                 Console.Write("\nEnter Product No : ");
                 P_no = Console.ReadLine();
-            } while (!Validation.IsProduct(P_no));
+            } while (Validation.IsProduct(P_no));
 
             if (Validation.IsStop(P_no))
                 Program.start();
@@ -409,9 +485,6 @@ namespace ConsoleApplication2
                 Console.Write("Order Number : ");
                 no = Console.ReadLine();
             } while (Validation.IsOrderNo(no) || !Validation.IsNumber(no));
-
-            if (Validation.IsStop(no))
-                Program.start();
 
             int O_no = Convert.ToInt32(no);
 
@@ -451,11 +524,11 @@ namespace ConsoleApplication2
                     {
                         Console.Write("Product Unit Price is {0} : ", od.ProductDetail.UnitPrice);
                         price = Console.ReadLine();
-                    }while(Validation.IsEmpty(price) || !Validation.IsNumber(price));
+                    } while (Validation.IsEmpty(price) || !Validation.IsNumber(price));
 
                     if (price.Equals("0"))
                     { Program.start(); }
-                    
+
                     else
                     {
                         OD_unit = Convert.ToDouble(price);
@@ -469,15 +542,14 @@ namespace ConsoleApplication2
                         qt = Console.ReadLine();
                     } while (Validation.IsQuantity(qt));
 
-                    if (qt.Equals("-1"))
+                    if (qt.Equals("0"))
                     { Program.start(); }
                     OD_quantity = Convert.ToInt32(qt);
 
-                    
+
 
                     string dis;
                     double OD_discount = 0;
-                    bool flag = true;
                     do
                     {
                         Console.Write("Enter Discount (Enter to Skip) : ");
@@ -486,11 +558,11 @@ namespace ConsoleApplication2
                     if (dis.Equals("0"))
                     { Program.start(); }
 
-                    if(!dis.Equals(""))
+                    if (!dis.Equals(""))
                     {
                         OD_discount = Convert.ToInt32(dis);
                     }
-                    
+
 
                     DateTime OD_create = DateTime.Now;
                     DateTime OD_modifi = DateTime.Now;
@@ -504,16 +576,29 @@ namespace ConsoleApplication2
                     od.CreatedDate = OD_create;
                     od.ModifiedDate = OD_modifi;
 
-                    AllOrder.Add(temp_o);
                     AllOrderDetails.Add(od);
                 }
                 else
                 {
                     Console.WriteLine("Product not avilable");
                 }
-                Console.Write("\nAdd Product? (Yes : 1/No : 0) : ");
+                Console.Write("\nAdd Product? (Yes : 1 | No : 0) : ");
                 wannadd = Console.ReadLine();
             } while (wannadd != "0");
+            Console.WriteLine(AllOrder.Count);
+            AllOrder.Add(temp_o);
+        }
+
+        static void ExecuteCommand(string Command)
+        {
+            ProcessStartInfo ProcessInfo;
+            Process Process;
+
+            ProcessInfo = new ProcessStartInfo("cmd.exe", "/K " + Command);
+            ProcessInfo.CreateNoWindow = false;
+            ProcessInfo.UseShellExecute = true;
+
+            Process = Process.Start(ProcessInfo);
         }
 
         public static void start()
@@ -530,6 +615,7 @@ namespace ConsoleApplication2
                 {
                     inp = Console.ReadLine();
                 } while (!Validation.IsNumber(inp));
+                
                 input = Convert.ToInt32(inp);
 
                 switch (input)
@@ -539,24 +625,32 @@ namespace ConsoleApplication2
                         break;
                     case 1:
                         AddOrder();
+                        Console.ReadKey();
+                        ExecuteCommand("cls");
                         break;
                     case 2:
                         UpadteOrder();
+                        Console.ReadKey();
                         break;
                     case 3:
                         DeleteOrder();
+                        Console.ReadKey();
                         break;
                     case 7:
                         ProductStatus();
+                        Console.ReadKey();
                         break;
                     case 5:
                         LastDetails();
+                        Console.ReadKey();
                         break;
                     case 6:
                         LastUnitPrice();
+                        Console.ReadKey();
                         break;
                     case 4:
                         View();
+                        Console.ReadKey();
                         break;
                     default:
                         Console.WriteLine("Wrong");
