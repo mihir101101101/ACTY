@@ -626,7 +626,6 @@ namespace ConsoleApplication2
                     case 1:
                         AddOrder();
                         Console.ReadKey();
-                        ExecuteCommand("cls");
                         break;
                     case 2:
                         UpadteOrder();
