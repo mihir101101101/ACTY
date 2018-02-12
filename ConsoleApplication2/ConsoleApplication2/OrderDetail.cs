@@ -30,15 +30,7 @@ namespace ConsoleApplication2
 
         public void Show()
         {
-            Console.WriteLine("Name             : {0}", this.productdetail.ProductName);
-            Console.WriteLine("Unite Price      : {0}", this.unitprice);
-            Console.WriteLine("Quantity         : {0}", this.quantity);
-            Console.WriteLine("Amount           : {0}", this.amount);
-            Console.WriteLine("Discount         : {0}", this.discountamount);
-            Console.WriteLine("Total            : {0}", this.GrandTotal);
-            Console.WriteLine("Create Date      : {0}", this.CreatedDate);
-            Console.WriteLine("Modified Date    : {0}", this.modifieddate);
-            Console.WriteLine("Product Avilable : {0}", this.productdetail.IsActive);
+            Console.WriteLine("{0}\t{1}\t\t{2}\t\t{3}\t{4}", this.productdetail.ProductNo, this.productdetail.ProductName, this.quantity, this.amount, this.GrandTotal);
         }
     }
 }

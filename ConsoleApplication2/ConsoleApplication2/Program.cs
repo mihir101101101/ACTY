@@ -18,10 +18,10 @@ namespace ConsoleApplication2
 
         Program()
         {
-            string[] c1 = { "1", "Akash", "Kansara street", "Amreli", "Gujarat", "365601", "India" };
-            string[] c2 = { "2", "Vijay", "Vejalpur", "Ahmedabad", "Gujarat", "360001", "India" };
-            string[] c3 = { "3", "Malik", "Tower chock", "Kolkata", "Bangal", "48001", "India" };
-            string[] c4 = { "4", "Mihir", "Palghar", "Mumbai", "Maharastra", "410001", "India" };
+            string[] c1 = { "1", "Akash", "Kansara street", "Amreli   ", "Gujarat   ", "365601", "India" };
+            string[] c2 = { "2", "Vijay", "Vejalpur      ", "Ahmedabad", "Gujarat   ", "360001", "India" };
+            string[] c3 = { "3", "Malik", "Tower chock   ", "Kolkata  ", "Bangal    ", "480001", "India" };
+            string[] c4 = { "4", "Mihir", "Palghar       ", "Mumbai   ", "Maharastra", "410001", "India" };
             List<string[]> Clist = new List<string[]>() { c1, c2, c3, c4 };
 
             string[] e1 = { "1", "Aksay", "Goradiya", "Palghar", "Mumbai", "Maharastra", "410001" };
@@ -32,7 +32,7 @@ namespace ConsoleApplication2
             string[] p1 = { "1", "Wanish", "50", "yes" };
             string[] p2 = { "2", "Arial", "60", "yes" };
             string[] p3 = { "3", "Mouse", "150", "yes" };
-            string[] p4 = { "4", "Key Bord", "250", "no" };
+            string[] p4 = { "4", "KeyBord", "250", "no" };
             string[] p5 = { "5", "Shoes", "699", "yes" };
             string[] p6 = { "6", "Watch", "550", "yes" };
             string[] p7 = { "7", "Beg", "499", "yes" };
@@ -133,16 +133,21 @@ namespace ConsoleApplication2
 
         static void UpadteOrder()
         {
-            Show.AllOrder();
             if (AllOrder.Count == 0)
             {
+                Console.WriteLine("No Order Placed Yet...!");
                 return;
             }
+            Show.AllOrder();
             string up_no;
             do
             {
                 Console.Write("\nEnter Order Number : ");
                 up_no = Console.ReadLine();
+                if (Check.chkOrderNo(up_no))
+                {
+                    Console.WriteLine("No Order Number Found..!");
+                }
             } while (Validation.IsOrderAvail(up_no));
 
             if(up_no.Equals("0"))
@@ -150,22 +155,24 @@ namespace ConsoleApplication2
 
             int update_no = Convert.ToInt32(up_no);
 
-            Show.showOrderDetails(update_no);
-
             int index = 0;
             int len = Program.AllOrderDetails.Count;
             OrderDetail od = new OrderDetail();
 
             int update_product_no;
-            string st;
             do
             {
+                Show.showOrderDetails(update_no);
                 bool flag = false;
                 string pro_no;
                 do
                 {
-                    Console.Write("\nEnter Product Number : ");
+                    Console.Write("\nEnter Product Number (Exit 0) : ");
                     pro_no = Console.ReadLine();
+                    if(Check.chkProductNo(update_no, pro_no))
+                    {
+                        Console.WriteLine("No Product Avialable Within Order \n");
+                    }
                 } while (!Validation.IsNumber(pro_no));
 
                 if (pro_no.Equals("0"))
@@ -191,6 +198,10 @@ namespace ConsoleApplication2
                         Console.Write("Enter Quantity : ");
                         qt = Console.ReadLine();
                     } while (Validation.IsQuantity(qt));
+
+                    if (qt.Equals("0"))
+                        start();
+
                     od.Quantity = Convert.ToInt32(qt);
                     od.Amount = od.UnitPrice * od.Quantity;
                     od.GrandTotal = od.Amount - od.DiscountAmount;
@@ -198,54 +209,55 @@ namespace ConsoleApplication2
 
                     Program.AllOrderDetails[index] = od;
 
-                    Show.showOrderDetails(od.OrderNoRef);
+                    //Show.showOrderDetails(od.OrderNoRef);
+                    Console.WriteLine("\nNo\tName\t\tQuantity\tAmount\tTotal");
                     od.Show();
                 }
                 else
                 {
-                    Console.WriteLine("No product avilable");
+                    //Console.WriteLine("No Product Available!");
                 }
-
-                Console.Write("\nUpdate More? ( No : 0 ) : ");
-                st = Console.ReadLine();
-            } while (!st.Equals("0"));
+            } while (true);
         }
 
         static void DeleteOrder()
         {
-            Show.AllOrder();
-            if (AllOrder.Count == 0)
-                return;
             string del;
             do
             {
+                if (AllOrder.Count == 0)
+                {
+                    Console.WriteLine("No Order Placed Yet...!");
+                    return;
+                }
                 do
                 {
-                    Console.Write("Enter No : ");
+                    Show.AllOrder();
+                    Console.Write("\nEnter No : ");
                     del = Console.ReadLine();
-                } while (!Validation.IsNumber(del));
+                    if (del.Equals("0"))
+                        break;
+                    if (Check.chkOrderNo(del))
+                    {
+                        Console.WriteLine("No Order Number Found..!");
+                    }
+                } while (Check.chkOrderNo(del));
 
                 if (del.Equals("0"))
                     start();
 
                 int del_no = Convert.ToInt32(del);
 
-                bool flag = true;
+                Console.WriteLine("No\tName\t\tQuantity\tAmount\tTotal");
                 foreach (OrderDetail del_od in Program.AllOrderDetails)
                 {
                     if (del_od.OrderNoRef == del_no)
                     {
-                        flag = false;
                         del_od.Show();
                     }
                 }
 
-                if (flag)
-                {
-                    Console.WriteLine("No Order Avilable");
-                    break;
-                }
-                Console.Write("\nWant to delete? (Yes : 1 | No : 0) : ");
+                Console.Write("Want to delete? (Yes : 1 | No : 0) : ");
                 string ans = Console.ReadLine();
 
                 if (ans.Equals("1"))
@@ -289,8 +301,12 @@ namespace ConsoleApplication2
                 string no;
                 do
                 {
-                    Console.Write("Enter Product No (Exit 0) : ");
+                    Console.Write("\nEnter Product Number To Toggle Available (Exit 0) : ");
                     no = Console.ReadLine();
+                    if (Validation.IsProduct(no))
+                    {
+                        Console.WriteLine("No Product Available..!");
+                    }
                 }while(Validation.IsProduct(no));
                 
                 if(no.Equals("0"))
@@ -312,70 +328,46 @@ namespace ConsoleApplication2
 
         static void LastDetails(bool all = false)
         {
-            string name;
-            Show.showAllCustomerName();
-            do
-            {
-                Console.Write("Enter Customer no : ");
-                name = Console.ReadLine();
-            }while(!Validation.IsCustomer(name));
-            int no = Convert.ToInt32(name);
-
-            ArrayList temp = Program.AllOrder;
-            temp.Reverse();
-
-            if (Validation.IsCustomerShop(no))
-            {
-                Console.WriteLine("Product No\t\tProduct Name\t\tPrice\t\tQuantity\tAmount\t\tDiscount\t\tTotal\t\tDate");
-                foreach (Order o in temp)
-                {
-                    if (o.CustomerDetail.CustomerNo == no)
-                    {
-                        int i = o.OrderNo;
-                        foreach (OrderDetail od in AllOrderDetails)
-                        {
-                            if (i == od.OrderNoRef)
-                            {
-                                Show.showLastCustomer(od);
-                            }
-                        }
-                    }
-                }
-            }
+            if (AllOrder.Count == 0)
+                Console.WriteLine("No Order Placed Yet...!");
             else
             {
-                Console.WriteLine("No Data Found...!");
+                int index = AllOrder.Count - 1;
+                Order o = (Order)AllOrder[index];
+                int no = o.OrderNo;
+
+                Console.WriteLine("Order No\tEmployee Name\tCustomer Name\tCity\t\tCountry\tOrder Date\tCreated Date");
+                Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}\t{4}\t{5}\t{6}",o.OrderNo, o.EmployeeDetail.FirstName, o.CustomerDetail.CustomerName, o.ShipCity, o.ShipCountry, o.OrderDate, o.CreatedDate);
+                Console.WriteLine("========================================================================================");
+                Console.WriteLine("Product No\tProduct Name\tPrice\tQuantity\tAmount\tDiscount\tTotal");
+                foreach (OrderDetail od in AllOrderDetails)
+                {
+                    if (od.OrderNoRef == no)
+                    {
+                        Console.WriteLine("{0}\t\t{1}\t\t{2}\t{3}\t\t{4}\t{5}\t\t{6}", od.ProductDetail.ProductNo, od.ProductDetail.ProductName, od.ProductDetail.UnitPrice, od.Quantity, od.Amount, od.DiscountAmount, od.GrandTotal);
+                    }
+                }
             }
         }
 
         static void LastUnitPrice()
         {
-            Show.showAllProduct();
-            string name;
-            do
+            if (AllOrder.Count == 0)
+                Console.WriteLine("No Order Placed Yet...!");
+            else
             {
-                Console.Write("Enter Product No : ");
-                name = Console.ReadLine();
-            } while (Validation.IsShoped(name));
-            
-            if(name.Equals("0"))
-                start();
-            int no = Convert.ToInt32(name);
-            
-            ArrayList temp = Program.AllOrderDetails;
-            temp.Reverse();
-            bool flag = true;
-            foreach (OrderDetail od in temp)
-            {
-                if (od.ProductDetail.ProductNo == no)
+                int index = AllOrder.Count - 1;
+                Order o = (Order)AllOrder[index];
+                int no = o.OrderNo;
+
+                foreach (OrderDetail od in AllOrderDetails)
                 {
-                    flag = false;
-                    Console.WriteLine("Last Unit Price of {0} is {1}", od.ProductDetail.ProductName, od.UnitPrice);
-                    break;
+                    if(od.OrderNoRef == no)
+                    {
+                        Console.WriteLine("Last unit price of {0} is : {1}", od.ProductDetail.ProductName, od.UnitPrice);
+                    }
                 }
             }
-            if(flag)
-                Console.WriteLine("Not Shoped Yet");
         }
 
         public static void View()
@@ -484,6 +476,13 @@ namespace ConsoleApplication2
             {
                 Console.Write("Order Number : ");
                 no = Console.ReadLine();
+                if (Validation.IsNumber(no))
+                {
+                    if (Validation.ChkOrderNo(no))
+                    {
+                        Console.WriteLine("Order No Allready Avilable..!");
+                    }
+                }
             } while (Validation.IsOrderNo(no) || !Validation.IsNumber(no));
 
             int O_no = Convert.ToInt32(no);
@@ -492,7 +491,7 @@ namespace ConsoleApplication2
             o.OrderNo = O_no;
             o.CustomerDetail = fillCustomerDetails();
             o.EmployeeDetail = fillEmployeeDetails();
-            o.OrderDate = DateTime.Now.ToString("dd/mm/yyyy");
+            o.OrderDate = DateTime.Now.ToString("dd/MM/yyyy");
             o.ShipName = o.CustomerDetail.CustomerName;
             o.ShipAddress = o.CustomerDetail.Address;
             o.ShipCity = o.CustomerDetail.City;
@@ -508,10 +507,11 @@ namespace ConsoleApplication2
 
         static void AddOrderDetails(Order temp_o)
         {
+            ArrayList temp = new ArrayList();
             string wannadd;
 
             do
-            {
+            {   
                 OrderDetail od = new OrderDetail();
                 od.OrderNoRef = temp_o.OrderNo;
                 od.ProductDetail = fillProductDetails();
@@ -527,7 +527,7 @@ namespace ConsoleApplication2
                     } while (Validation.IsEmpty(price) || !Validation.IsNumber(price));
 
                     if (price.Equals("0"))
-                    { Program.start(); }
+                    { temp.Clear(); Program.start(); }
 
                     else
                     {
@@ -543,7 +543,7 @@ namespace ConsoleApplication2
                     } while (Validation.IsQuantity(qt));
 
                     if (qt.Equals("0"))
-                    { Program.start(); }
+                    { temp.Clear(); Program.start(); }
                     OD_quantity = Convert.ToInt32(qt);
 
 
@@ -552,11 +552,14 @@ namespace ConsoleApplication2
                     double OD_discount = 0;
                     do
                     {
-                        Console.Write("Enter Discount (Enter to Skip) : ");
+                        Console.Write("Enter Discount (Hit Enter to Skip) : ");
                         dis = Console.ReadLine();
                     } while (Validation.IsDiscount(dis));
                     if (dis.Equals("0"))
-                    { Program.start(); }
+                    {
+                        temp.Clear();
+                        Program.start();
+                    }
 
                     if (!dis.Equals(""))
                     {
@@ -576,16 +579,22 @@ namespace ConsoleApplication2
                     od.CreatedDate = OD_create;
                     od.ModifiedDate = OD_modifi;
 
-                    AllOrderDetails.Add(od);
+                    
+                    temp.Add(od);
+                    //AllOrderDetails.Add(od);
                 }
                 else
                 {
                     Console.WriteLine("Product not avilable");
                 }
-                Console.Write("\nAdd Product? (Yes : 1 | No : 0) : ");
+                Console.Write("\nHit Enter for more items (Exit 0) : ");
                 wannadd = Console.ReadLine();
             } while (wannadd != "0");
-            Console.WriteLine(AllOrder.Count);
+            foreach (OrderDetail od in temp)
+            {
+                AllOrderDetails.Add(od);
+            }
+            temp.Clear();
             AllOrder.Add(temp_o);
         }
 
@@ -625,30 +634,37 @@ namespace ConsoleApplication2
                         break;
                     case 1:
                         AddOrder();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 2:
                         UpadteOrder();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 3:
                         DeleteOrder();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 7:
                         ProductStatus();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 5:
                         LastDetails();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 6:
                         LastUnitPrice();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     case 4:
                         View();
+                        Console.WriteLine("Hit Enter For Menu.");
                         Console.ReadKey();
                         break;
                     default:

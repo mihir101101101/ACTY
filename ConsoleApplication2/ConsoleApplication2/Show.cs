@@ -19,7 +19,7 @@ namespace ConsoleApplication2
 
         public static void showAllEmployeeName()
         {
-            Console.WriteLine("NO\tName\t\tCity");
+            Console.WriteLine("NO\tName\t\t\tCity");
             foreach (Employee e in Program.AllEmployeeDetails)
             {
                 Console.WriteLine("{0}\t{1}\t\t{2}", e.EmployeeNo, e.FirstName + " " + e.LastName, e.City);
@@ -28,9 +28,10 @@ namespace ConsoleApplication2
 
         public static void showAllProductName()
         {
+            Console.WriteLine("NO\tName\t\tPrice\tAvilable");
             foreach (Product p in Program.AllProductDetails)
             {
-                Console.WriteLine("{0}\t{1}\t{2}\t{3}", p.ProductNo, p.ProductName, p.UnitPrice, p.IsActive);
+                Console.WriteLine("{0}\t{1}\t\t{2}\t{3}", p.ProductNo, p.ProductName, p.UnitPrice, p.IsActive);
             }
         }
 
@@ -102,15 +103,10 @@ namespace ConsoleApplication2
 
         public static void AllOrder()
         {
-            if (Program.AllOrder.Count <= 0)
-            {
-                Console.WriteLine("No Order Avilable");
-                return;
-            }
-            Console.WriteLine("NO\t\tEmployee Name\t\tCustomer Name\t\tDate");
+            Console.WriteLine("\nNO\t\tEmployee Name\t\tCustomer Name\t\tOrder Date");
             foreach (Order o in Program.AllOrder)
             {
-                Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}", o.OrderNo, o.EmployeeDetail.FirstName + " " + o.EmployeeDetail.LastName, o.CustomerDetail.CustomerName, o.OrderDate);
+                Console.WriteLine("{0}\t\t{1}\t\t{2}\t\t\t{3}", o.OrderNo, o.EmployeeDetail.FirstName + " " + o.EmployeeDetail.LastName, o.CustomerDetail.CustomerName, o.OrderDate);
             }
         }
 
@@ -118,13 +114,14 @@ namespace ConsoleApplication2
         {
             if (Program.AllOrder.Count <= 0)
             {
-                Console.WriteLine("No Order Avilable");
+                Console.WriteLine("No Order Placed Yet..!");
                 return;
             }
-            Console.WriteLine("\n\nNO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\tState\tPIN\tCountry\tDate");
+            Console.WriteLine("\n\nNO\tCustomer Name\tEmployee Name\tOrder Date\tAddress\t\tCity\t\tState\t\tPIN\t\tCountry\tDate");
             foreach (Order o in Program.AllOrder)
             {
                 Console.WriteLine("{0}\t{1}\t\t{2}\t\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}", o.OrderNo, o.CustomerDetail.CustomerName, o.EmployeeDetail.FirstName, o.OrderDate, o.ShipAddress, o.ShipCity, o.ShipState, o.ShipPostalCode, o.ShipCountry, o.CreatedDate);
+                Console.WriteLine("========================================================================================================================");
                 Console.WriteLine("\nProduct name\tPrice\tQuantity\tAmount\tDiscount\tTotal\tDate\t\t\tChange Date");
                 int no = o.OrderNo;
                 foreach (OrderDetail od in Program.AllOrderDetails)

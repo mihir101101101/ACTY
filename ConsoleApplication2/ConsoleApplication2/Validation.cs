@@ -127,6 +127,17 @@ namespace ConsoleApplication2
             return false;
         }
 
+        public static bool ChkOrderNo(string no)
+        {
+            int num = Convert.ToInt32(no);
+            foreach (Order o in Program.AllOrder)
+            {
+                if (o.OrderNo == num)
+                    return true;
+            }
+            return false;
+        }
+
         public static bool IsOrderAvail(string no)
         {
             if (no.Equals("0"))
