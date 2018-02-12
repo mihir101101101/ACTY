@@ -621,6 +621,7 @@ namespace ConsoleApplication2
                 Console.WriteLine("5. Last Order Detail\t\t6. Last Order's UnitPrice\t\t7. Product Avilability\t\t0. Exit");
                 Console.WriteLine("===============================================================================================================");
                 do
+
                 {
                     inp = Console.ReadLine();
                 } while (!Validation.IsNumber(inp));
@@ -681,3 +682,4 @@ namespace ConsoleApplication2
         }
     }
 }
+//hkhhevnklb lbenb
